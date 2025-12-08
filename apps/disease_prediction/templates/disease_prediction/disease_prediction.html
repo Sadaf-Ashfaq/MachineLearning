@@ -1,0 +1,198 @@
+{% extends 'common/base.html' %}
+
+{% block title %}Disease Predictions{% endblock %}
+
+{% block content %}
+<style>
+    .disease-card {
+        background-color: #4D4738 !important; /* FOREST background */
+        border: 3px solid #C0AE94 !important; /* SAND border */
+        border-radius: 15px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(77, 71, 59, 0.3);
+        height: 100%;
+    }
+    
+    .disease-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 8px 25px rgba(117, 95, 74, 0.5);
+        border-color: #755F4A !important; /* ALOE border on hover */
+    }
+    
+    .disease-card .card-body {
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .disease-card h5 {
+        color: #C0AE94 !important; /* SAND text */
+        font-weight: 600;
+        font-size: 1.3rem;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    
+    .disease-card .btn-predict {
+        background-color: #755F4A !important; /* ALOE background */
+        color: white !important;
+        border: 2px solid #C0AE94 !important; /* SAND border */
+        border-radius: 8px;
+        padding: 10px 25px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+    
+    .disease-card .btn-predict:hover {
+        background-color: #BAB9A7 !important; /* OLIVE background on hover */
+        color: #4D4738 !important; /* FOREST text on hover */
+        border-color: #4D4738 !important; /* FOREST border */
+        transform: scale(1.05);
+        box-shadow: 0 4px 15px rgba(186, 185, 167, 0.4);
+    }
+    
+    .page-header {
+        background-color: #4D4738; /* FOREST background */
+        color: #C0AE94; /* SAND text */
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 40px;
+        border: 3px solid #C0AE94;
+        box-shadow: 0 4px 15px rgba(77, 71, 59, 0.3);
+    }
+    
+    .page-header h2 {
+        color: #C0AE94 !important;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+    
+    .page-header p {
+        color: #C0AE94;
+        margin: 0;
+        font-size: 1.1rem;
+    }
+    
+    .card-icon {
+        font-size: 3rem;
+        color: #C0AE94;
+        margin-bottom: 15px;
+    }
+</style>
+
+<div class="container">
+    <div class="page-header text-center">
+        <h2><i class="bi bi-heart-pulse-fill"></i> Disease Prediction System</h2>
+        <p>Select a prediction model to analyze your health</p>
+    </div>
+    
+    <div class="row mt-4">
+        <!-- 1. Disease Prediction (General) -->
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card disease-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-clipboard2-pulse-fill card-icon"></i>
+                    <h5>Disease Prediction</h5>
+                    <button class="btn btn-predict">
+                        <i class="bi bi-arrow-right-circle"></i> Predict
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 2. Diabetes Risk -->
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card disease-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-droplet-fill card-icon"></i>
+                    <h5>Diabetes Risk</h5>
+                    <button class="btn btn-predict">
+                        <i class="bi bi-arrow-right-circle"></i> Predict
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 3. Heart Disease -->
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card disease-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-heart-fill card-icon"></i>
+                    <h5>Heart Disease</h5>
+                    <button class="btn btn-predict">
+                        <i class="bi bi-arrow-right-circle"></i> Predict
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 4. Kidney Disease -->
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card disease-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-capsule-pill card-icon"></i>
+                    <h5>Kidney Disease</h5>
+                    <button class="btn btn-predict">
+                        <i class="bi bi-arrow-right-circle"></i> Predict
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 5. Liver Disease -->
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card disease-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-activity card-icon"></i>
+                    <h5>Liver Disease</h5>
+                    <a href="{% url 'disease_prediction:liver_disease' %}" class="btn btn-predict">
+                        <i class="bi bi-arrow-right-circle"></i> Predict
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 6. Nutrient Deficiency -->
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card disease-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-egg-fill card-icon"></i>
+                    <h5>Nutrient Deficiency</h5>
+                    <a href="{% url 'disease_prediction:nutrient_deficiency' %}" class="btn btn-predict">
+                        <i class="bi bi-arrow-right-circle"></i> Predict
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 7. Lifestyle Score -->
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card disease-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-graph-up-arrow card-icon"></i>
+                    <h5>Lifestyle Score</h5>
+                    <button class="btn btn-predict">
+                        <i class="bi bi-arrow-right-circle"></i> Analyze
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 8. Symptom Severity -->
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card disease-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-thermometer-half card-icon"></i>
+                    <h5>Symptom Severity</h5>
+                    <button class="btn btn-predict">
+                        <i class="bi bi-arrow-right-circle"></i> Check
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

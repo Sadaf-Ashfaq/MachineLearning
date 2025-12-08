@@ -1,0 +1,1155 @@
+{% extends 'common/base.html' %}
+{% load static %}
+{% block title %}Home - Home{% endblock %}
+{% block content %}
+<style>
+    :root {
+        --forest: #4D4738;
+        --olive: #BAB9A7;
+        --aloe: #755F4A;
+        --sand: #C0AE94;
+        --white: #FFFFFF;
+        --shadow-light: rgba(77, 71, 56, 0.1);
+        --shadow-medium: rgba(77, 71, 56, 0.15);
+        --shadow-dark: rgba(77, 71, 56, 0.25);
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(135deg, var(--olive) 0%, var(--sand) 100%);
+        min-height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .home-container {
+        padding: 40px 20px;
+        min-height: 90vh;
+        color: var(--forest);
+        margin-top: -20px;
+        width: 100%;
+        box-sizing: border-box;
+        position: relative;
+    }
+
+    .home-container::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 20% 80%, rgba(192, 174, 148, 0.3) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(117, 95, 74, 0.2) 0%, transparent 50%);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .welcome-title {
+        font-size: 2.8rem;
+        margin-bottom: 40px;
+        text-align: center;
+        color: var(--forest);
+        text-shadow: 2px 2px 4px rgba(192, 174, 148, 0.4);
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .main-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 30px;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding-bottom: 50px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .health-card {
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px var(--shadow-medium),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(192, 174, 148, 0.3);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        /* height: fit-content; */
+        /* min-height: 200px; */
+        display: flex;
+        flex-direction: column;
+        backdrop-filter: blur(10px);
+        position: relative;
+        overflow: hidden;
+    }
+     /* Also add this to make content distribute evenly within cards: */
+    .health-card > *:last-child {
+        margin-top: auto; /* Push last element to bottom */
+    }
+    .health-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--aloe), var(--sand), var(--aloe));
+        border-radius: 20px 20px 0 0;
+    }
+
+    .health-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 20px 40px var(--shadow-dark),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        border-color: var(--sand);
+    }
+
+    .health-card h2 {
+        margin-bottom: 25px;
+        font-size: 1.5rem;
+        color: var(--forest);
+        text-align: center;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    /* BMI Calculator */
+    .bmi-inputs input {
+        padding: 15px 20px;
+        margin: 10px 0;
+        border-radius: 12px;
+        border: 2px solid var(--sand);
+        width: 100%;
+        background: rgba(255, 255, 255, 0.9);
+        color: var(--forest);
+        font-size: 1rem;
+        box-sizing: border-box;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+
+    .bmi-inputs input:focus {
+        outline: none;
+        border-color: var(--aloe);
+        box-shadow: 0 0 0 3px rgba(117, 95, 74, 0.1);
+        background: var(--white);
+    }
+
+    .bmi-inputs input::placeholder {
+        color: rgba(77, 71, 56, 0.6);
+    }
+
+    .health-btn {
+        background: linear-gradient(135deg, var(--aloe), var(--forest));
+        color: white;
+        border: none;
+        padding: 15px 25px;
+        margin: 12px 0;
+        border-radius: 12px;
+        cursor: pointer;
+        width: 100%;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-weight: 600;
+        font-size: 1.05rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .health-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .health-btn:hover::before {
+        left: 100%;
+    }
+
+    .health-btn:hover {
+        background: linear-gradient(135deg, var(--forest), var(--aloe));
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(117, 95, 74, 0.4);
+    }
+
+    .health-btn:active {
+        transform: translateY(-1px);
+    }
+
+    #bmi-result {
+        margin-top: 20px;
+        padding: 15px;
+        background: linear-gradient(135deg, rgba(192, 174, 148, 0.15), rgba(186, 185, 167, 0.1));
+        border-radius: 12px;
+        font-weight: 600;
+        text-align: center;
+        color: var(--forest);
+        min-height: 20px;
+        border: 1px solid rgba(192, 174, 148, 0.3);
+    }
+
+    /* Water Tracker */
+    .water-tracker {
+        text-align: center;
+    }
+
+    .water-glass {
+        font-size: 4rem;
+        cursor: pointer;
+        display: block;
+        margin: 25px auto;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        width: fit-content;
+        color: var(--aloe);
+        filter: drop-shadow(0 4px 8px rgba(117, 95, 74, 0.3));
+        position: relative;
+    }
+
+    .water-glass:hover {
+        transform: scale(1.2) rotate(5deg);
+        color: var(--forest);
+        filter: drop-shadow(0 8px 16px rgba(117, 95, 74, 0.4));
+    }
+
+    .water-glass:active {
+        transform: scale(1.1);
+    }
+
+    .counter {
+        font-size: 1.4rem;
+        display: block;
+        font-weight: 700;
+        margin-bottom: 20px;
+        color: var(--forest);
+        background: linear-gradient(135deg, var(--sand), var(--olive));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* Date and Time */
+    .calendar-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 25px;
+    }
+
+    .calendar-box {
+        border: 3px solid var(--aloe);
+        border-radius: 20px;
+        padding: 30px;
+        text-align: center;
+        background: linear-gradient(135deg, rgba(192, 174, 148, 0.15), rgba(186, 185, 167, 0.1));
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .calendar-box::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(117, 95, 74, 0.05) 0%, transparent 70%);
+        animation: rotate 20s linear infinite;
+    }
+
+/* Weather Card Styles - Add these to your existing CSS */
+.weather-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 10px 0;
+}
+
+.weather-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(192, 174, 148, 0.1), rgba(186, 185, 167, 0.05));
+    border-radius: 15px;
+    border: 1px solid rgba(192, 174, 148, 0.2);
+}
+
+.weather-icon {
+    font-size: 4rem;
+    text-shadow: 2px 2px 4px rgba(77, 71, 56, 0.3);
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.weather-temp {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--forest);
+    text-shadow: 2px 2px 4px rgba(77, 71, 56, 0.2);
+}
+
+.weather-location {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--aloe);
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.weather-description {
+    font-size: 1rem;
+    color: var(--forest);
+    text-align: center;
+    margin-bottom: 20px;
+    font-style: italic;
+    text-transform: capitalize;
+}
+
+.weather-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: auto;
+}
+
+.weather-stat {
+    text-align: center;
+    padding: 12px;
+    background: linear-gradient(135deg, rgba(192, 174, 148, 0.15), rgba(186, 185, 167, 0.1));
+    border-radius: 10px;
+    border: 1px solid rgba(192, 174, 148, 0.2);
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--aloe);
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.stat-value {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--forest);
+}
+
+.weather-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: var(--aloe);
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(117, 95, 74, 0.2);
+    border-left: 4px solid var(--aloe);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.weather-error {
+    text-align: center;
+    color: var(--forest);
+    padding: 20px;
+}
+
+.weather-error p {
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+/* Mobile responsive for weather stats */
+@media (max-width: 768px) {
+    .weather-stats {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .weather-main {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .weather-temp {
+        font-size: 2.5rem;
+    }
+    
+    .weather-icon {
+        font-size: 3rem;
+    }
+   }    
+    @keyframes rotate {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .calendar-month {
+        font-size: 1.3rem;
+        margin-bottom: 15px;
+        color: var(--forest);
+        font-weight: 600;
+        position: relative;
+        z-index: 1;
+    }
+
+    .calendar-date {
+        font-size: 3.5rem;
+        color: var(--aloe);
+        font-weight: 800;
+        text-shadow: 2px 2px 4px rgba(77, 71, 56, 0.3);
+        position: relative;
+        z-index: 1;
+    }
+
+    .date-time {
+        font-size: 1.5rem;
+        color: var(--aloe);
+        text-shadow: 1px 1px 2px rgba(77, 71, 56, 0.3);
+        font-weight: 700;
+        text-align: center;
+        font-family: 'Courier New', monospace;
+        background: linear-gradient(135deg, var(--sand), var(--aloe));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* Quote and Health Tip */
+    .notepad, .notepad-large {
+        background: linear-gradient(135deg, rgba(192, 174, 148, 0.2), rgba(186, 185, 167, 0.15));
+        color: var(--forest);
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: inset 0 2px 4px rgba(77, 71, 56, 0.1);
+        font-style: italic;
+        width: 100%;
+        border-left: 5px solid var(--aloe);
+        flex-grow: 1;
+        margin-top: auto;
+        position: relative;
+        font-weight: 500;
+        line-height: 1.6;
+    }
+
+    .notepad-large {
+        padding: 30px;
+        font-size: 1.05rem;
+        line-height: 1.7;
+        min-height: 120px;
+        border-left: 6px solid var(--aloe);
+    }
+
+    .notepad::before, .notepad-large::before {
+        content: '';
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        width: 15px;
+        height: 15px;
+        background: var(--sand);
+        border-radius: 50%;
+        opacity: 0.3;
+    }
+
+    /* Mood Selector */
+    .mood-selector {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 20px;
+        margin-top: 25px;
+        padding: 25px;
+        background: linear-gradient(135deg, rgba(192, 174, 148, 0.15), rgba(186, 185, 167, 0.1));
+        border-radius: 20px;
+        justify-items: center;
+        border: 1px solid rgba(192, 174, 148, 0.3);
+    }
+
+    .mood {
+        font-size: 2.5rem;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        text-align: center;
+        padding: 15px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(117, 95, 74, 0.1), rgba(192, 174, 148, 0.1));
+        width: 70px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid transparent;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .mood::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, var(--aloe), var(--sand));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        border-radius: 50%;
+    }
+
+    .mood:hover {
+        transform: scale(1.4) rotate(10deg);
+        background: linear-gradient(135deg, rgba(117, 95, 74, 0.2), rgba(192, 174, 148, 0.2));
+        border-color: var(--aloe);
+        box-shadow: 0 8px 25px rgba(117, 95, 74, 0.3);
+        z-index: 10;
+    }
+
+    .mood:hover::before {
+        opacity: 0.1;
+    }
+
+    .mood:active {
+        transform: scale(1.2);
+    }
+
+    /* Notification Styles */
+    .notification {
+        position: fixed;
+        top: 30px;
+        right: 30px;
+        background: linear-gradient(135deg, var(--aloe), var(--forest));
+        color: white;
+        padding: 20px 25px;
+        border-radius: 15px;
+        z-index: 1000;
+        font-weight: 600;
+        box-shadow: 0 8px 25px rgba(77, 71, 56, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        animation: slideIn 0.5s ease-out;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    /* Enhanced Responsive Design */
+    @media (max-width: 768px) {
+        .main-content {
+            grid-template-columns: 1fr;
+            gap: 25px;
+            padding: 0 15px;
+        }
+        
+        .welcome-title {
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+        }
+        
+        .mood-selector {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .health-card {
+            padding: 25px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .mood-selector {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 20px;
+        }
+        
+        .mood {
+            font-size: 2rem;
+            width: 60px;
+            height: 60px;
+            padding: 12px;
+        }
+
+        .main-content {
+            padding: 0 10px;
+        }
+
+        .welcome-title {
+            font-size: 1.8rem;
+        }
+
+        .health-card {
+            padding: 20px;
+        }
+    }
+
+    /* Loading Animation */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .health-card {
+        animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    .health-card:nth-child(1) { animation-delay: 0.1s; }
+    .health-card:nth-child(2) { animation-delay: 0.2s; }
+    .health-card:nth-child(3) { animation-delay: 0.3s; }
+    .health-card:nth-child(4) { animation-delay: 0.4s; }
+    .health-card:nth-child(5) { animation-delay: 0.5s; }
+    .health-card:nth-child(6) { animation-delay: 0.6s; }
+</style>
+
+<div class="home-container">
+    <h1 class="welcome-title">Hey, <span id="username">{{ request.user.username }} </span></h1>
+
+    <div class="main-content">
+        <!-- BMI Calculator -->
+        <div class="health-card">
+            <h2>🧮 BMI Calculator</h2>
+            <div class="bmi-inputs">
+                <input type="number" id="height" placeholder="Height (cm)" min="0">
+                <input type="number" id="weight" placeholder="Weight (kg)" min="0">
+                <button class="health-btn" onclick="calculateBMI()">Calculate BMI</button>
+            </div>
+            <div id="bmi-result"></div>
+        </div>
+
+        <!-- Water Tracker -->
+        <div class="health-card water-tracker">
+            <h2> Water Tracker</h2>
+                <div class="water-glass" onclick="addGlass()" style="
+                font-size: 64px;        /* Bigger icon */
+                color:var(--forest);         /* Professional blue */
+                cursor: pointer;        /* Hand cursor on hover */
+                display: inline-block;  /* Keeps size tight */
+                margin: -10px auto 5px;
+                transition: transform 0.2s;
+                ">
+                <div class="water-glass" onclick="addGlass()" style="
+    width: 64px;
+    height: 64px;
+    cursor: pointer;
+    display: inline-block;
+    transition: transform 0.2s;
+">
+   <img src="https://cdn-icons-png.flaticon.com/128/3717/3717054.png" 
+       alt="Water Glass" 
+       width="64" height="64" 
+       style="pointer-events: none;">
+</div>
+
+                </div>
+            <span class="counter" id="glass-count">0 glasses</span>
+            <button class="health-btn" onclick="resetWater()">Reset Counter</button>
+        </div>
+
+        <!-- Date and Time -->
+        <div class="health-card">
+            <h2>📅 Today</h2>
+            <div class="calendar-container">
+                <div class="calendar-box">
+                    <h3 class="calendar-month" id="calendar-month">Month</h3>
+                    <div class="calendar-date" id="calendar-date">00</div>
+                </div>
+                <div class="date-time" id="date-time"></div>
+            </div>
+        </div>
+
+        <!-- Daily Quote -->
+        <div class="health-card">
+            <h2>💭 Daily Quote</h2>
+            <div class="notepad" id="quote">Select your mood to get a personalized quote!</div>
+        </div>
+
+        <!-- Health Tip -->
+        <div class="health-card">
+            <h2>🧠 Health Tip</h2>
+            <div class="notepad-large" id="habit-fact">
+                Stay hydrated! Drinking enough water helps maintain your energy levels, supports brain function, 
+                and keeps your skin healthy. Aim for 8 glasses of water per day for optimal health.
+            </div>
+        </div>
+<!-- NEW Weather Card - Add this -->
+<div class="health-card">
+    <h2>🌤️ Weather Today</h2>
+    <div id="weather-loading" class="weather-loading">
+        <div class="loading-spinner"></div>
+        <p>Getting weather data...</p>
+    </div>
+    <div id="weather-content" class="weather-content" style="display: none;">
+        <div class="weather-main">
+            <div class="weather-icon" id="weather-icon">☀️</div>
+            <div class="weather-temp" id="weather-temp">--°C</div>
+        </div>
+        <div class="weather-details">
+            <div class="weather-location" id="weather-location">Loading...</div>
+            <div class="weather-description" id="weather-description">--</div>
+            <div class="weather-stats">
+                <div class="weather-stat">
+                    <span class="stat-label">Feels like</span>
+                    <span class="stat-value" id="feels-like">--°</span>
+                </div>
+                <div class="weather-stat">
+                    <span class="stat-label">Humidity</span>
+                    <span class="stat-value" id="humidity">--%</span>
+                </div>
+                <div class="weather-stat">
+                    <span class="stat-label">Wind</span>
+                    <span class="stat-value" id="wind-speed">-- km/h</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="weather-error" class="weather-error" style="display: none;">
+        <p>⚠️ Unable to load weather data</p>
+        <button class="health-btn" onclick="getWeatherData()">Try Again</button>
+    </div>
+</div>
+
+
+        <!-- Mood Selector -->
+<div class="health-card" style="grid-column: 1 / -1;">
+    <h2>🎭 How are you feeling today?</h2>
+   <div class="mood-selector">
+   <span class="mood" onclick="selectMood(event,'happy')" title="Happy"><i class="fas fa-face-smile"></i></span>
+<span class="mood" onclick="selectMood(event,'sad')" title="Sad"><i class="fas fa-face-sad-tear"></i></span>
+<span class="mood" onclick="selectMood(event,'angry')" title="Angry"><i class="fas fa-face-angry"></i></span>
+<span class="mood" onclick="selectMood(event,'surprised')" title="Surprised"><i class="fas fa-face-surprise"></i></span>
+<span class="mood" onclick="selectMood(event,'neutral')" title="Neutral"><i class="fas fa-meh"></i></span>
+<span class="mood" onclick="selectMood(event,'excited')" title="Excited"><i class="fas fa-face-grin-stars"></i></span>
+<span class="mood" onclick="selectMood(event,'bored')" title="Bored"><i class="fas fa-face-meh-blank"></i></span>
+<span class="mood" onclick="selectMood(event,'anxious')" title="Anxious"><i class="fas fa-face-frown-open"></i></span>
+<span class="mood" onclick="selectMood(event,'confused')" title="Confused"><i class="fas fa-question-circle"></i></span>
+<span class="mood" onclick="selectMood(event,'relaxed')" title="Relaxed"><i class="fas fa-face-laugh-beam"></i></span>
+</div>
+</div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    feather.replace();
+    // BMI Calculator with enhanced styling
+    function calculateBMI() {
+        const height = parseFloat(document.getElementById('height').value);
+        const weight = parseFloat(document.getElementById('weight').value);
+        const result = document.getElementById('bmi-result');
+
+        if (!height || height <= 0 || !weight || weight <= 0) {
+            result.innerHTML = '<span style="color: #ff6b6b; font-weight: 600;">⚠️ Please enter valid height and weight values.</span>';
+            return;
+        }
+
+        const bmi = (weight / ((height / 100) ** 2)).toFixed(2);
+        let category = '';
+        let color = '';
+        
+        if (bmi < 18.5) {
+            category = 'Underweight';
+            color = '#74c0fc';
+        } else if (bmi < 24.9) {
+            category = 'Normal';
+            color = '#755F4A'; // ALOE for normal
+        } else if (bmi < 29.9) {
+            category = 'Overweight';
+            color = '#ffd43b';
+        } else {
+            category = 'Obese';
+            color = '#ff6b6b';
+        }
+        
+        result.innerHTML = `
+            <div style="
+                color: ${color}; 
+                font-size: 1.1rem; 
+                padding: 10px; 
+                border-radius: 8px; 
+                background: rgba(255,255,255,0.5);
+                border: 2px solid ${color}30;
+            ">
+                📊 Your BMI: <strong style="font-size: 1.3rem;">${bmi}</strong> 
+                <br><span style="font-size: 0.9rem; opacity: 0.8;">(${category})</span>
+            </div>
+        `;
+    }
+
+    // Enhanced Water Tracker
+    let glasses = parseInt(localStorage.getItem('waterGlasses')) || 0;
+    
+    function updateWaterDisplay() {
+        const glassCountElement = document.getElementById('glass-count');
+        glassCountElement.textContent = `${glasses} glass${glasses === 1 ? '' : 'es'}`;
+        
+        // Add visual feedback based on progress
+        if (glasses >= 8) {
+            glassCountElement.style.background = 'linear-gradient(135deg, #755F4A, #4D4738)';
+            glassCountElement.style.webkitBackgroundClip = 'text';
+            glassCountElement.style.webkitTextFillColor = 'transparent';
+        } else if (glasses >= 4) {
+            glassCountElement.style.background = 'linear-gradient(135deg, #C0AE94, #755F4A)';
+            glassCountElement.style.webkitBackgroundClip = 'text';
+            glassCountElement.style.webkitTextFillColor = 'transparent';
+        }
+        
+        localStorage.setItem('waterGlasses', glasses.toString());
+    }
+    
+    function addGlass() {
+        glasses++;
+        updateWaterDisplay();
+        if (glasses === 8) {
+            showNotification('🎉 Amazing! You\'ve reached your daily water goal!', 'success');
+        } else if (glasses % 4 === 0) {
+            showNotification('💧 Great progress! Keep staying hydrated!', 'info');
+        } else if (glasses === 1) {
+            showNotification('🌟 Great start! Keep going!', 'encouragement');
+        }
+    }
+    
+    function resetWater() {
+        glasses = 0;
+        updateWaterDisplay();
+        document.getElementById('glass-count').style.background = 'linear-gradient(135deg, #C0AE94, #BAB9A7)';
+        document.getElementById('glass-count').style.webkitBackgroundClip = 'text';
+        document.getElementById('glass-count').style.webkitTextFillColor = 'transparent';
+        showNotification('🔄 Water counter reset for a new day!', 'reset');
+    }
+    
+    function showNotification(message, type = 'default') {
+        // Remove existing notification
+        const existingNotification = document.querySelector('.notification');
+        if (existingNotification) {
+            existingNotification.remove();
+        }
+
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        
+        let bgGradient = 'linear-gradient(135deg, #755F4A, #4D4738)';
+        if (type === 'success') bgGradient = 'linear-gradient(135deg, #4D4738, #755F4A)';
+        if (type === 'info') bgGradient = 'linear-gradient(135deg, #C0AE94, #BAB9A7)';
+        if (type === 'encouragement') bgGradient = 'linear-gradient(135deg, #BAB9A7, #C0AE94)';
+        
+        notification.style.background = bgGradient;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.animation = 'slideIn 0.5s ease-out reverse';
+            setTimeout(() => notification.remove(), 500);
+        }, 3000);
+    }
+
+    // Enhanced Date and Time Update
+    function updateDateTime() {
+        const now = new Date();
+        const timeFormatted = now.toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true
+        });
+        document.getElementById('date-time').textContent = timeFormatted;
+
+        const options = { month: 'long' };
+        const month = new Intl.DateTimeFormat('en-US', options).format(now);
+        const date = now.getDate();
+        const year = now.getFullYear();
+        
+        document.getElementById('calendar-month').textContent = `${month} ${year}`;
+        document.getElementById('calendar-date').textContent = date;
+    }
+    
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+
+    // Enhanced Health Tips Array
+    const healthTips = [
+        "Regular exercise can boost your mood and energy levels. Even a 10-minute walk can make a significant difference in your daily wellness!",
+        "Getting 7-9 hours of quality sleep is crucial for your physical and mental health. Create a calming bedtime routine for better rest.",
+        "Eating a balanced diet with plenty of fruits and vegetables supports your immune system and provides sustained energy throughout the day.",
+        "Practice deep breathing exercises to reduce stress and improve focus. Try the 4-7-8 technique for instant relaxation.",
+        "Take regular breaks from screens to protect your eyes and mental well-being. Follow the 20-20-20 rule for optimal eye health.",
+        "Social connections are vital for mental health. Reach out to friends and family regularly to maintain strong relationships.",
+        "Spending time in nature can reduce stress and improve your overall mood. Even 15 minutes outdoors can be transformative.",
+        "Practice gratitude daily - it can significantly improve your mental well-being and overall life satisfaction."
+    ];
+
+    // Enhanced Mood Selector with Professional Styling
+    function selectMood(event,mood) {
+        let moodQuote = '';
+        let healthTip = '';
+        
+        // Add visual feedback for selected mood
+        document.querySelectorAll('.mood').forEach(m => m.style.background = 'linear-gradient(135deg, rgba(117, 95, 74, 0.1), rgba(192, 174, 148, 0.1))');
+         event.target.style.background = 'linear-gradient(135deg, rgba(117, 95, 74, 0.3), rgba(192, 174, 148, 0.2))';
+        
+        switch(mood) {
+            case 'happy':
+                moodQuote = "✨ Happiness is not something ready made. It comes from your own actions. - Dalai Lama";
+                healthTip = "Keep that positive energy flowing! Happy people tend to have stronger immune systems, better cardiovascular health, and live longer, more fulfilling lives.";
+                break;
+            case 'sad':
+                moodQuote = "🌧️ Tears come from the heart and not from the brain. It's perfectly natural and healthy to feel sad sometimes.";
+                healthTip = "Sadness is temporary and serves a purpose in processing emotions. Try gentle exercise, listen to uplifting music, or talk to someone you trust for support.";
+                break;
+            case 'angry':
+                moodQuote = "🔥 For every minute you are angry, you lose sixty seconds of happiness. - Ralph Waldo Emerson";
+                healthTip = "Channel your anger constructively. Take deep breaths, count to ten, and consider physical exercise to release tension in a healthy, productive way.";
+                break;
+            case 'surprised':
+                moodQuote = "🎉 Surprise is the greatest gift which life can grant us. Embrace the unexpected! - Boris Pasternak";
+                healthTip = "Embrace life's surprises! They keep our minds active, promote neuroplasticity, and help us grow as resilient, adaptable individuals.";
+                break;
+            case 'neutral':
+                moodQuote = "🧘 Sometimes you need to take a break from everyone and spend time alone to recharge and reflect.";
+                healthTip = "Neutral feelings are completely normal and healthy. Use this balanced time for self-reflection, planning your goals, and mindful meditation.";
+                break;
+            case 'excited':
+                moodQuote = "🚀 Excitement is the first step to success. Channel that positive energy into meaningful action!";
+                healthTip = "Fantastic energy! Use this excitement to tackle challenging tasks, try something new, or engage in creative projects that inspire you.";
+                break;
+            case 'bored':
+                moodQuote = "😴 Boredom is the feeling that everything is a waste of time. But it can spark incredible creativity and innovation!";
+                healthTip = "Boredom often leads to creativity and self-discovery. Try learning a new skill, reading an inspiring book, or engaging in a hobby you've neglected.";
+                break;
+            case 'anxious':
+                moodQuote = "😰 Anxiety is the dizziness of freedom. Remember, you have the inner strength to overcome any challenge.";
+                healthTip = "Try the 4-7-8 breathing technique: Inhale for 4 counts, hold for 7, exhale for 8. Repeat 4 times. Consider mindfulness meditation for long-term anxiety management.";
+                break;
+            case 'confused':
+                moodQuote = "🤔 Confusion is the first step to clarity. Every expert was once a beginner, and every master was once a disaster.";
+                healthTip = "Break down complex problems into smaller, manageable parts. Don't hesitate to ask for help, research thoroughly, or seek guidance from mentors.";
+                break;
+            case 'relaxed':
+                moodQuote = "😌 Relaxation is the key to a happy, balanced life. You're doing wonderfully by taking time to unwind and recharge.";
+                healthTip = "Perfect state for optimal health! Relaxation reduces stress hormones and boosts immunity. Consider meditation, gentle stretching, or nature walks to maintain this balance.";
+                break;
+        }
+        
+        document.getElementById("quote").innerHTML = moodQuote;
+        document.getElementById("habit-fact").innerHTML = healthTip;
+        
+        // Save mood for the day with enhanced local storage
+        localStorage.setItem('dailyMood', mood);
+        localStorage.setItem('moodDate', new Date().toDateString());
+        
+        // Show mood selection feedback
+        showNotification(`Mood selected: ${mood.charAt(0).toUpperCase() + mood.slice(1)} 🎯`, 'mood');
+    }
+
+    // Initialize water display on page load
+    updateWaterDisplay();
+    
+    // Load saved mood if it's from today
+    const savedMoodDate = localStorage.getItem('moodDate');
+    const today = new Date().toDateString();
+    if (savedMoodDate === today) {
+        const savedMood = localStorage.getItem('dailyMood');
+        if (savedMood) {
+            selectMood(savedMood);
+        }
+    } else {
+        // New day - show random health tip with enhanced presentation
+        const randomTip = healthTips[Math.floor(Math.random() * healthTips.length)];
+        document.getElementById("habit-fact").innerHTML = randomTip;
+    }
+
+    // Add subtle animations when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        // Stagger card animations
+        const cards = document.querySelectorAll('.health-card');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            setTimeout(() => {
+                card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    });
+
+    // Enhanced keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            const focused = document.activeElement;
+            if (focused.classList.contains('health-btn')) {
+                focused.click();
+            }
+        }
+    });
+
+    // Add focus management for better accessibility
+    document.querySelectorAll('input').forEach(input => {
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const nextInput = this.parentElement.querySelector('button');
+                if (nextInput) {
+                    nextInput.focus();
+                    nextInput.click();
+                }
+            }
+        });
+    });
+
+const WEATHER_API_KEY = '386d1f87c818cd98a0c5246a3edb4ac9'; 
+const WEATHER_API_URL = 'https://api.openweathermap.org/data/2.5/weather';
+
+// Weather icon mapping
+const weatherIcons = {
+    '01d': '☀️', '01n': '🌙',
+    '02d': '⛅', '02n': '☁️',
+    '03d': '☁️', '03n': '☁️',
+    '04d': '☁️', '04n': '☁️',
+    '09d': '🌧️', '09n': '🌧️',
+    '10d': '🌦️', '10n': '🌧️',
+    '11d': '⛈️', '11n': '⛈️',
+    '13d': '❄️', '13n': '❄️',
+    '50d': '🌫️', '50n': '🌫️'
+};
+
+async function getWeatherData() {
+    const loadingElement = document.getElementById('weather-loading');
+    const contentElement = document.getElementById('weather-content');
+    const errorElement = document.getElementById('weather-error');
+    
+    // Show loading
+    loadingElement.style.display = 'flex';
+    contentElement.style.display = 'none';
+    errorElement.style.display = 'none';
+
+    try {
+        // Get user's location
+        const position = await getCurrentPosition();
+        const { latitude, longitude } = position.coords;
+        
+        // Fetch weather data
+        const response = await fetch(
+            `${WEATHER_API_URL}?lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}&units=metric`
+        );
+        
+        if (!response.ok) {
+            throw new Error('Weather API request failed');
+        }
+        
+        const weatherData = await response.json();
+        displayWeatherData(weatherData);
+        
+    } catch (error) {
+        console.error('Weather fetch error:', error);
+        showWeatherError();
+    }
+}
+
+function getCurrentPosition() {
+    return new Promise((resolve, reject) => {
+        if (!navigator.geolocation) {
+            reject(new Error('Geolocation not supported'));
+            return;
+        }
+        
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+            timeout: 10000,
+            enableHighAccuracy: true
+        });
+    });
+}
+
+function displayWeatherData(data) {
+    const loadingElement = document.getElementById('weather-loading');
+    const contentElement = document.getElementById('weather-content');
+    
+    // Update weather information
+    document.getElementById('weather-icon').textContent = 
+        weatherIcons[data.weather[0].icon] || '🌤️';
+    document.getElementById('weather-temp').textContent = 
+        `${Math.round(data.main.temp)}°C`;
+    document.getElementById('weather-location').textContent = 
+        data.name;
+    document.getElementById('weather-description').textContent = 
+        data.weather[0].description;
+    document.getElementById('feels-like').textContent = 
+        `${Math.round(data.main.feels_like)}°C`;
+    document.getElementById('humidity').textContent = 
+        `${data.main.humidity}%`;
+    document.getElementById('wind-speed').textContent = 
+        `${Math.round(data.wind.speed * 3.6)} km/h`;
+    
+    // Show content, hide loading
+    loadingElement.style.display = 'none';
+    contentElement.style.display = 'flex';
+    
+    // Show success notification
+    showNotification(`🌤️ Weather updated for ${data.name}!`, 'weather');
+}
+
+function showWeatherError() {
+    const loadingElement = document.getElementById('weather-loading');
+    const errorElement = document.getElementById('weather-error');
+    
+    loadingElement.style.display = 'none';
+    errorElement.style.display = 'block';
+}
+
+// Initialize weather on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Add small delay to let other elements load first
+    setTimeout(() => {
+        getWeatherData();
+    }, 1000);
+});
+
+// IMPORTANT: To use this weather feature, you need to:
+// 1. Sign up for a free API key at: https://openweathermap.org/api
+// 2. Replace 'YOUR_API_KEY_HERE' with your actual API key
+// 3. The browser will ask for location permission
+
+</script>
+{% endblock %}

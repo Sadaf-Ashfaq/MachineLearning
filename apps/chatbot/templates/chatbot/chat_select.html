@@ -1,0 +1,13 @@
+<!-- chatbot/templates/chatbot/chat_select.html -->
+{% extends 'common/base.html' %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+    <h2>🧠 Choose Assistant</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <button name="chat_type" value="mental" class="btn btn-primary m-2">Mental Health Assistant</button>
+        <button name="chat_type" value="health" class="btn btn-success m-2">Health Assistant</button>
+    </form>
+</div>
+{% endblock %}

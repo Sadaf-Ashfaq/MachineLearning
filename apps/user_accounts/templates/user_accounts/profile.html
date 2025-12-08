@@ -1,0 +1,866 @@
+{% extends 'common/base.html' %}
+{% load static %}
+{% get_media_prefix as MEDIA_URL %}
+{% block title %}User Profile{% endblock %}
+{% block content %}
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap');
+  
+  :root {
+    --forest: #4D4738;
+    --olive: #BAB9A7;
+    --aloe: #755F4A;
+    --sand: #C0AE94;
+    --text-dark: #1a1a1a;
+    --text-medium: #4a5568;
+    --white-pure: #ffffff;
+    --shadow-soft: 0 4px 12px rgba(77, 71, 56, 0.08);
+    --shadow-medium: 0 8px 24px rgba(77, 71, 56, 0.12);
+    --shadow-strong: 0 12px 32px rgba(77, 71, 56, 0.16);
+    --border-light: rgba(186, 185, 167, 0.2);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  /* Global Body Styling */
+  body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #f8f9fa 0%, var(--sand) 50%, var(--olive) 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Container with optimized spacing */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.5rem 1rem 1.5rem;
+  }
+
+  /* Compact Professional Header */
+  .profile-header {
+    background: linear-gradient(135deg, var(--forest) 0%, var(--aloe) 50%, var(--olive) 100%);
+    color: var(--white-pure);
+    padding: 1.5rem 2rem;
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-medium);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .profile-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='20' cy='20' r='1.5'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+    opacity: 0.4;
+  }
+
+  .profile-header-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+  }
+
+  .profile-header h1 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    letter-spacing: -0.02em;
+    color: #ffffff; /* Add this line */
+  }
+
+  .profile-header .subtitle {
+    font-size: 0.95rem;
+    font-weight: 400;
+    opacity: 0.85;
+    margin-bottom: 0;
+  }
+
+  /* Professional Cards with tighter spacing */
+  .card {
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-soft);
+    border-radius: 12px;
+    background: var(--white-pure);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+
+  .card:hover {
+    box-shadow: var(--shadow-medium);
+    transform: translateY(-1px);
+    border-color: var(--olive);
+  }
+
+  .card-body {
+    padding: 1.75rem;
+  }
+
+  .btn-forest {
+    background: linear-gradient(135deg, var(--forest), var(--aloe));
+    border: none;
+    color: var(--white-pure);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 10px;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-transform: none;
+    letter-spacing: 0.01em;
+    position: relative;
+    overflow: hidden;
+    min-width: 200px;  /* ADD THIS LINE */
+    display: inline-block;  /* ADD THIS LINE TOO */
+    text-align: center;  /* ADD THIS LINE TOO */
+}
+
+  .btn-forest::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    transition: left 0.5s;
+  }
+
+  .btn-forest:hover::before {
+    left: 100%;
+  }
+
+  .btn-forest:hover {
+    background: linear-gradient(135deg, var(--aloe), var(--olive));
+    color: var(--white-pure);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-medium);
+  }
+
+  .btn-outline-forest {
+    color: var(--forest);
+    border: 2px solid var(--forest);
+    background: transparent;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-size: 0.9rem;
+    border-radius: 10px;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Fixed button sizing */
+    display: inline-block;
+    text-align: center;
+    min-width: 180px;
+  }
+
+  .btn-outline-forest:hover {
+    background: var(--forest);
+    border-color: var(--forest);
+    color: var(--white-pure);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-medium);
+  }
+
+  .btn-success {
+  background: linear-gradient(135deg, var(--forest), var(--aloe));
+  border: none;
+  color: var(--white-pure);
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: 10px;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, var(--aloe), var(--olive));
+  color: var(--white-pure);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-medium);
+}
+
+  /* Refined Form Controls */
+  .form-control {
+    border: 2px solid var(--border-light);
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: #fafafa;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    padding: 0.75rem 1rem;
+    font-weight: 400;
+  }
+
+  .form-control:focus {
+    border-color: var(--forest);
+    box-shadow: 0 0 0 0.15rem rgba(77, 71, 56, 0.1);
+    background-color: var(--white-pure);
+    outline: none;
+  }
+
+  .form-control:hover:not(:focus) {
+    border-color: var(--olive);
+    background-color: var(--white-pure);
+  }
+
+  /* Optimized Typography */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', sans-serif;
+    color: var(--forest);
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: 0.75rem;
+  }
+
+  h5 {
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  label {
+    color: var(--aloe);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Profile Info Styling - centered without profile pic */
+  .profile-info {
+    text-align: center;
+    width: 100%;
+  }
+
+  .profile-info p {
+    margin-bottom: 0.75rem;
+    color: var(--text-medium);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .profile-info strong {
+    color: var(--forest);
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    display: inline-flex;
+    align-items: center;
+    min-width: 130px;
+    flex-shrink: 0;
+  }
+
+  /* Professional Icon Styling */
+  .icon {
+    margin-right: 0.5rem;
+    color: var(--aloe);
+    font-size: 1em;
+    width: 16px;
+    text-align: center;
+  }
+
+  /* Chart Styling */
+  #chart {
+    max-height: 400px;
+    width: 100% !important;
+    height: 400px !important;
+  }
+
+  .chart-container {
+    background: var(--white-pure);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--border-light);
+  }
+
+  /* Loading States */
+  .uploading {
+    opacity: 0.6;
+    pointer-events: none;
+    position: relative;
+  }
+
+  .uploading::after {
+    content: '⏳';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5rem;
+    opacity: 1 !important;
+    background: rgba(77, 71, 56, 0.9);
+    color: white;
+    padding: 0.75rem;
+    border-radius: 50%;
+    z-index: 10;
+  }
+
+  /* Success Messages */
+  .alert-success {
+    background: linear-gradient(135deg, #48bb78, #38a169);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 0.75rem 1.25rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Enhanced section titles */
+  .section-title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--border-light);
+  }
+
+  .section-title h5 {
+    margin: 0;
+    color: var(--forest);
+    display: flex;
+    align-items: center;
+  }
+
+  .section-title i {
+    color: var(--aloe);
+    margin-right: 0.5rem;
+  }
+
+  /* Optimized vitals grid */
+  .vitals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .vital-input-group {
+  background: var(--sand);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid var(--olive);
+  transition: all 0.3s ease;
+}
+
+.vital-input-group:hover {
+  background: var(--white-pure);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-soft);
+}
+
+  .vital-icon {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    display: block;
+    color: var(--aloe);
+  }
+
+  /* Chart buttons spacing - Fixed button container */
+  .chart-buttons {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .chart-buttons .btn {
+    margin: 0 0.75rem 0.75rem 0;
+  }
+
+  /* Responsive Design - mobile optimization */
+  @media (max-width: 768px) {
+    .container {
+      padding: 0.25rem 0.75rem 1rem;
+    }
+    
+    .profile-header {
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .profile-header h1 {
+      font-size: 1.75rem;
+    }
+    
+    .card-body {
+      padding: 1.25rem;
+    }
+    
+    .profile-info p {
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+    }
+    
+    .profile-info strong {
+      min-width: auto;
+      margin-bottom: 0.25rem;
+    }
+
+    .vitals-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .chart-buttons .btn {
+      margin-right: 0;
+      margin-bottom: 0.75rem;
+      display: block;
+      width: 100%;
+    }
+  }
+
+  /* Enhanced micro-interactions */
+  .btn {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .form-control {
+    transform: translateZ(0);
+  }
+
+  /* Additional professional touches */
+  .card-body .row .col-md-4 {
+    margin-bottom: 1rem;
+  }
+
+  /* Better spacing for form elements */
+  .form-control, .btn {
+    font-size: 0.9rem;
+  }
+
+  /* Improved visual hierarchy */
+  .profile-info p:last-of-type {
+    margin-bottom: 1rem;
+  }
+  /* Glowing button effect */
+.glow-btn {
+  position: relative;
+  box-shadow: 0 0 10px rgba(77, 71, 56, 0.3);
+  animation: subtle-glow 2s ease-in-out infinite alternate;
+}
+
+.glow-btn:hover {
+  box-shadow: 0 0 20px rgba(77, 71, 56, 0.5), 0 0 30px rgba(186, 185, 167, 0.3);
+  animation: none;
+}
+
+@keyframes subtle-glow {
+  from {
+    box-shadow: 0 0 10px rgba(77, 71, 56, 0.3);
+  }
+  to {
+    box-shadow: 0 0 15px rgba(77, 71, 56, 0.4), 0 0 20px rgba(186, 185, 167, 0.2);
+  }
+}
+
+</style>
+
+<div class="container">
+    <!-- Compact Professional Header -->
+    <div class="profile-header">
+        <div class="profile-header-content">
+            <h1>{{ request.user.username }}'s Profile</h1>
+            <p class="subtitle">Health Management Dashboard</p>
+        </div>
+    </div>
+
+    <!-- Main Profile Card -->
+    <div class="card">
+        <div class="card-body">   
+            <!-- Profile Information - Now centered without profile pic -->
+            <div class="profile-info">
+                <p><strong><i class="bi bi-person icon"></i>Full Name:</strong> <span>{{ profile.full_name|default:"Not set" }}</span></p>
+                <p><strong><i class="bi bi-envelope icon"></i>Email:</strong> <span>{{ profile.email }}</span></p>
+                <p><strong><i class="bi bi-gender-ambiguous icon"></i>Gender:</strong> <span>{{ profile.gender|default:"Not set" }}</span></p>
+                <p><strong><i class="bi bi-calendar icon"></i>Date of Birth:</strong> <span>{{ profile.date_of_birth|default:"Not set" }}</span></p>
+                <p><strong><i class="bi bi-shield-check icon"></i>Account Type:</strong> <span>{{ profile.account_type }}</span></p>
+                <button class="btn btn-forest mt-2" data-bs-toggle="collapse" data-bs-target="#editProfile">
+                <i class="bi bi-pencil-square me-2"></i>Edit Profile Information
+            </button>
+            <button class="btn btn-forest mt-2 glow-btn" onclick="window.location.href='{% url 'health_records' %}'">
+                <i class="bi bi-file-medical me-2"></i>View Health Records
+            </button>
+            </div>    
+        </div>       
+    </div>
+
+    <!-- Refined Edit Profile Form -->
+    <div class="collapse" id="editProfile">
+        <div class="card">
+            <div class="card-body">
+                <div class="section-title">
+                    <h5><i class="bi bi-person-gear"></i>Edit Profile Information</h5>
+                </div>
+                <form method="POST" action="{% url 'edit_profile' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="full_name">Full Name</label>
+                            <input type="text" id="full_name" name="full_name" value="{{ profile.full_name }}" class="form-control" placeholder="Enter your full name">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="gender">Gender</label>
+                            <select id="gender" name="gender" class="form-control">
+                                <option value="Not set" {% if profile.gender == "Not set" %}selected{% endif %}>Not set</option>
+                                <option value="Male" {% if profile.gender == "Male" %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if profile.gender == "Female" %}selected{% endif %}>Female</option>
+                                <option value="Other" {% if profile.gender == "Other" %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="dob">Date of Birth</label>
+                            <input type="date" id="dob" name="dob" value="{{ profile.date_of_birth|date:'Y-m-d' }}" class="form-control">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-forest">
+                        <i class="bi bi-check-circle me-2"></i>Update Profile Information
+                    </button>             
+                </form>
+            </div>
+        </div>
+    </div>
+
+   <!-- Daily Vitals Form -->
+<div class="card">
+    <div class="card-body">
+        <div class="section-title">
+            <h5><i class="bi bi-heart-pulse"></i>Record Daily Vitals</h5>
+            
+            <!-- Error Message with theme colors -->
+            {% if error_message %}
+                <div class="alert alert-custom-error mt-2 auto-dismiss" role="alert" style="
+                    background-color: #f4e6d9; 
+                    border: 1px solid #d4a574; 
+                    color: #8b4513;
+                    border-radius: 8px;
+                    padding: 12px 16px;
+                    margin-bottom: 15px;
+                ">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error_message }}
+                    <button type="button" class="btn-close float-end" style="font-size: 0.8rem; opacity: 0.6;" onclick="this.parentElement.style.display='none'"></button>
+                </div>
+            {% endif %}
+            
+            <!-- Success Message with theme colors -->
+            {% if success_message %}
+                <div class="alert alert-custom-success mt-2 auto-dismiss" role="alert" style="
+                    background-color: #e8f5e8; 
+                    border: 1px solid #a4c4a4; 
+                    color: #2d5016;
+                    border-radius: 8px;
+                    padding: 12px 16px;
+                    margin-bottom: 15px;
+                ">
+                    <i class="bi bi-check-circle-fill me-2"></i>{{ success_message }}
+                    <button type="button" class="btn-close float-end" style="font-size: 0.8rem; opacity: 0.6;" onclick="this.parentElement.style.display='none'"></button>
+                </div>
+            {% endif %}
+            
+            <!-- Info Message with theme colors -->
+            <div class="alert alert-custom-info mt-2" role="alert" style="
+                background-color: #f9f6f2; 
+                border: 1px solid #d4c4a8; 
+                color: #6b5b47;
+                border-radius: 8px;
+                padding: 10px 14px;
+                margin-bottom: 15px;
+                font-size: 0.9rem;
+            ">
+                <i class="bi bi-info-circle-fill me-2"></i>
+                <strong>Note:</strong> You can only record your vitals once per day. Make sure all values are accurate before submitting.
+            </div>
+        </div>
+        
+        <form method="POST">
+            {% csrf_token %}
+            <div class="vitals-grid">
+                <div class="vital-input-group">
+                    <span class="vital-icon"><i class="bi bi-activity"></i></span>
+                    <label for="bp_sys">Systolic BP</label>
+                    <input type="number" id="bp_sys" name="bp_sys" class="form-control" 
+                           placeholder="120" min="50" max="250" required>
+                    <small class="form-text text-muted">Range: 50-250 mmHg</small>
+                </div>
+                <div class="vital-input-group">
+                    <span class="vital-icon"><i class="bi bi-heart"></i></span>
+                    <label for="bp_dia">Diastolic BP</label>
+                    <input type="number" id="bp_dia" name="bp_dia" class="form-control" 
+                           placeholder="80" min="30" max="150" required>
+                    <small class="form-text text-muted">Range: 30-150 mmHg</small>
+                </div>
+                <div class="vital-input-group">
+                    <span class="vital-icon"><i class="bi bi-droplet"></i></span>
+                    <label for="sugar">Sugar Level</label>
+                    <input type="number" id="sugar" name="sugar" step="0.1" class="form-control" 
+                           placeholder="100.0" min="30" max="500" required>
+                    <small class="form-text text-muted">Range: 30-500 mg/dL</small>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-plus-circle me-2"></i>Save Today's Vitals
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Fixed Chart Buttons with equal sizing -->
+<div class="chart-buttons">
+    <a href="?chart=bp" class="btn btn-outline-forest">
+        <i class="bi bi-graph-up me-2"></i>View Blood Pressure
+    </a>
+    <a href="?chart=sugar" class="btn btn-outline-forest">
+        <i class="bi bi-graph-down me-2"></i>View Sugar Levels
+    </a>
+</div>
+
+    <!-- Enhanced Chart Display -->
+    {% if chart_data %}
+    <div class="chart-container">
+        <h5 class="text-center mb-4">{{ chart_data.label }} Analytics</h5>
+        <div style="position: relative; height: 400px;">
+            <canvas id="chart"></canvas>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+{% block scripts %}
+<!-- Chart.js Library -->
+{% if chart_data %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Chart initialization with proper error handling
+document.addEventListener("DOMContentLoaded", function () {
+    const chartCanvas = document.getElementById('chart');
+    
+    // Check if chart element exists and Chart.js is loaded
+    if (chartCanvas && typeof Chart !== 'undefined') {
+        try {
+            const ctx = chartCanvas.getContext('2d');
+            
+            // Create gradient only after context is confirmed
+            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, "{{ chart_data.color }}");
+            gradient.addColorStop(1, "#ffffff00");
+
+            new Chart(ctx, {
+                type: "{{ chart_data.type }}",
+                data: {
+                    labels: {{ chart_data.labels|default:"[]"|safe }},
+                    datasets: [{
+                        label: "{{ chart_data.label }}",
+                        data: {{ chart_data.data|default:"[]"|safe }},
+                        borderColor: "{{ chart_data.color }}",
+                        backgroundColor: gradient,
+                        borderWidth: 3,
+                        tension: 0.4,
+                        pointRadius: 6,
+                        pointHoverRadius: 10,
+                        pointBackgroundColor: "{{ chart_data.color }}",
+                        pointBorderColor: "#ffffff",
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                font: {
+                                    size: 14,
+                                    family: 'Poppins',
+                                    weight: '500'
+                                },
+                                color: '#4D4738'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: "#4D4738",
+                            titleFont: { size: 14, family: 'Poppins', weight: '600' },
+                            bodyFont: { size: 12, family: 'Inter' },
+                            cornerRadius: 8,
+                            padding: 10
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { 
+                                drawOnChartArea: true,
+                                color: 'rgba(77, 71, 56, 0.08)'
+                            },
+                            ticks: {
+                                font: {
+                                    size: 12,
+                                    family: 'Inter',
+                                    weight: '500'
+                                },
+                                color: '#755F4A'
+                            }
+                        },
+                        x: {
+                            grid: { 
+                                drawOnChartArea: false,
+                                color: 'rgba(77, 71, 56, 0.08)'
+                            },
+                            ticks: {
+                                font: {
+                                    size: 12,
+                                    family: 'Inter',
+                                    weight: '500'
+                                },
+                                color: '#755F4A'
+                            }
+                        }
+                    }
+                }
+            });
+        } catch (error) {
+            console.error('Error initializing chart:', error);
+        }
+    }
+});
+</script>
+{% endif %}
+
+<script>
+// Combined utility functions and event handlers
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // Auto-dismiss alerts functionality
+    const autoDismissAlerts = document.querySelectorAll('.auto-dismiss');
+    autoDismissAlerts.forEach(function(alert) {
+        setTimeout(function() {
+            if (alert && alert.parentNode) {
+                alert.style.transition = 'opacity 0.5s ease-out';
+                alert.style.opacity = '0';
+                
+                setTimeout(function() {
+                    if (alert && alert.parentNode) {
+                        alert.style.display = 'none';
+                    }
+                }, 500);
+            }
+        }, 8000);
+    });
+
+    // Form validation for vitals form specifically
+    const vitalsForm = document.querySelector('form[method="POST"]:not([action*="edit_profile"])');
+    
+    if (vitalsForm) {
+        vitalsForm.addEventListener('submit', function(e) {
+            const sysInput = document.getElementById('bp_sys');
+            const diaInput = document.getElementById('bp_dia');
+            
+            if (sysInput && diaInput) {
+                const sys = parseInt(sysInput.value);
+                const dia = parseInt(diaInput.value);
+                
+                if (sys && dia && sys <= dia) {
+                    e.preventDefault();
+                    showCustomAlert('Systolic BP must be higher than Diastolic BP');
+                }
+            }
+        });
+    }
+
+    // Custom alert function
+    function showCustomAlert(message) {
+        // Remove any existing custom alerts
+        const existingAlerts = document.querySelectorAll('.custom-validation-alert');
+        existingAlerts.forEach(alert => alert.remove());
+        
+        const customAlert = document.createElement('div');
+        customAlert.className = 'custom-validation-alert';
+        customAlert.innerHTML = `
+            <div style="
+                background-color: #f4e6d9; 
+                border: 1px solid #d4a574; 
+                color: #8b4513;
+                border-radius: 8px;
+                padding: 12px 16px;
+                margin-bottom: 15px;
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 1000;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                max-width: 300px;
+                animation: slideIn 0.3s ease-out;
+            ">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                ${message}
+                <button type="button" onclick="this.parentElement.parentElement.remove()" style="
+                    background: none; 
+                    border: none; 
+                    float: right; 
+                    font-size: 1.2rem; 
+                    cursor: pointer;
+                    color: #8b4513;
+                    line-height: 1;
+                ">&times;</button>
+            </div>
+        `;
+        
+        document.body.appendChild(customAlert);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (customAlert.parentNode) {
+                customAlert.style.animation = 'slideOut 0.3s ease-in';
+                setTimeout(() => {
+                    if (customAlert.parentNode) {
+                        customAlert.remove();
+                    }
+                }, 300);
+            }
+        }, 5000);
+    }
+});
+</script>
+
+<!-- CSS for custom alert animations -->
+<style>
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+</style>
+{% endblock %}

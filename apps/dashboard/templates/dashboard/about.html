@@ -1,0 +1,271 @@
+{% extends 'common/base.html' %}
+{% load static %}
+{% block title %}About | AI Health Assistant{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --forest: #4D4738;
+        --olive: #BAB9A7;
+        --aloe: #755F4A;
+        --sand: #C0AE94;
+    }
+
+    .hero-section {
+        background: linear-gradient(135deg, var(--forest) 0%, var(--aloe) 100%);
+        color: white;
+        padding: 1.5rem 0; /* Reduced padding */
+        border-radius: 0 0 1rem 1rem; /* Smaller border radius */
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Softer shadow */
+        margin-bottom: 2rem;
+    }
+
+    .hero-icon {
+        font-size: 1.5rem; /* Smaller icon */
+        margin-bottom: 0.5rem; /* Reduced margin */
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    .team-section {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 1.5rem; /* Slightly smaller */
+        padding: 2rem; /* Reduced padding */
+        margin: 2rem 0;
+        box-shadow: 0 10px 30px rgba(77, 71, 56, 0.1);
+    }
+
+    .team-member {
+        background: linear-gradient(135deg, var(--olive) 0%, var(--sand) 100%);
+        border-radius: 1rem; /* Smaller radius */
+        padding: 1.5rem; /* Reduced padding */
+        margin-bottom: 1.5rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        color: var(--forest);
+        position: relative;
+        overflow: hidden;
+        height: 100%; /* Make cards equal height */
+    }
+
+    .team-member::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .team-member:hover::before {
+        left: 100%;
+    }
+
+    .team-member:hover {
+        transform: translateY(-5px); /* Smaller hover effect */
+        box-shadow: 0 10px 25px rgba(77, 71, 56, 0.15);
+    }
+
+    .team-avatar {
+       width: 140px; 
+       height: 140px;
+        border-radius: 50%;
+        margin: 0 auto 1rem;
+        background-size: cover;
+        background-position: center;
+        border: 3px solid var(--forest); /* Thinner border */
+        box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    }
+
+    .team-name {
+        font-size: 1.2rem; /* Slightly smaller */
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .team-role {
+        font-size: 0.9rem; /* Slightly smaller */
+        opacity: 0.8;
+        margin-bottom: 0.8rem;
+        font-weight: 500;
+    }
+
+    .contact-btn {
+        background: var(--forest);
+        color: white;
+        border: none;
+        padding: 0.5rem 1.2rem; /* Smaller button */
+        border-radius: 1.5rem;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    .contact-btn:hover {
+        background: var(--aloe);
+        color: white;
+        transform: scale(1.05);
+        text-decoration: none;
+    }
+
+    .section-title {
+        color: var(--forest);
+        font-weight: 700;
+        margin-bottom: 1.5rem; /* Reduced margin */
+        position: relative;
+        padding-bottom: 0.8rem; /* Reduced padding */
+        text-align: center;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px; /* Shorter line */
+        height: 2px; /* Thinner line */
+        background: linear-gradient(90deg, var(--forest), var(--aloe));
+        border-radius: 2px;
+    }
+
+    .app-features {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 1rem; /* Smaller radius */
+        padding: 1.5rem; /* Reduced padding */
+        margin: 1.5rem 0;
+        box-shadow: 0 5px 15px rgba(77, 71, 56, 0.08); /* Softer shadow */
+    }
+
+    .feature-item {
+        padding: 0.8rem; /* Reduced padding */
+        margin-bottom: 0.6rem;
+        border-left: 3px solid var(--forest); /* Thinner border */
+        background: rgba(186, 185, 167, 0.1);
+        border-radius: 0 0.4rem 0.4rem 0;
+        transition: all 0.3s ease;
+    }
+
+    .feature-item:hover {
+        background: rgba(186, 185, 167, 0.2);
+        transform: translateX(3px); /* Smaller movement */
+    }
+    
+    .contact-note {
+        text-align: center;
+        font-size: 0.9rem;
+        color: var(--aloe);
+        margin-top: 1rem;
+        font-style: italic;
+    }
+</style>
+
+<div class="container mt-4">
+    <!-- Hero Section - Made smaller -->
+    <div class="hero-section">
+        <div class="text-center">
+            <div class="hero-icon">
+                <i class="bi bi-heart-pulse"></i>
+            </div>
+            <h3 class="mb-2">About AI Health Assistant</h3> <!-- Changed to h3 -->
+            <p class="mb-0" style="font-size: 0.95rem;">Your smart companion for tracking physical and mental health</p> <!-- Smaller text -->
+        </div>
+    </div>
+
+    <!-- App Features -->
+    <div class="app-features">
+        <h4 class="text-center mb-3" style="color: var(--forest);"> <!-- Reduced margin -->
+            <i class="bi bi-heart-pulse me-2"></i>What does this app do?
+        </h4>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="feature-item">
+                     Detects physical & mental health issues using AI
+                </div>
+                <div class="feature-item">
+                     Chatbot for symptom checking and health advice
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="feature-item">
+                     Tracks moods, vitals, and past health records
+                </div>
+                <div class="feature-item">
+                     Secure login and personal dashboard
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Section -->
+    <div class="team-section">
+        <h2 class="section-title">
+            <i class="bi bi-people me-2"></i>Our Team
+        </h2>
+        
+        <div class="row">
+            <div class="col-lg-6 col-md-6 mb-4">
+                <div class="team-member">
+                     <img src="{% static 'team_photos/anisha.jpeg' %}" class="team-avatar" alt="Anisha Rana">
+                    <div class="team-name">Anisha Rana</div>
+                    <div class="team-role">Frontend Developer</div>
+                    <p class="small mb-3">Creating beautiful and intuitive user interfaces for seamless user experience</p>
+                    <a href="mailto:sagarlal67@gmail.com" class="contact-btn">
+                        <i class="bi bi-envelope me-1"></i>Contact Anisha
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-6 col-md-6 mb-4">
+                <div class="team-member">
+                    <img src="{% static 'team_photos/sadaf.jpeg' %}" class="team-avatar" alt="Sadaf Ashfaq">
+                    <div class="team-name">Sadaf Ashfaq</div>
+                    <div class="team-role">Tester & Integration</div>
+                    <p class="small mb-3">Ensuring quality assurance and smooth system integration</p>
+                    <a href="mailto:sadafashfaq9a@gmail.com" class="contact-btn">
+                        <i class="bi bi-envelope me-1"></i>Contact Sadaf
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-6 col-md-6 mb-4">
+                <div class="team-member">
+                   <img src="{% static 'team_photos/aeman.jpeg' %}" class="team-avatar" alt="Aeman Siddique">
+                    <div class="team-name">Aeman Siddique</div>
+                    <div class="team-role">Database Developer</div>
+                    <p class="small mb-3">Designing and managing robust database architecture</p>
+                    <a href="mailto:aim4nsiddique@gmail.com" class="contact-btn">
+                        <i class="bi bi-envelope me-1"></i>Contact Aeman
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-6 col-md-6 mb-4">
+                <div class="team-member">
+                  <img src="{% static 'team_photos/urooj.jpeg' %}" class="team-avatar" alt="Urooj ILyas">
+                    <div class="team-name">Urooj Ilyas</div>
+                    <div class="team-role">Backend Developer</div>
+                    <p class="small mb-3">Building powerful server-side logic and API development</p>
+                    <a href="mailto:uroojilyasyousafzai@gmail.com" class="contact-btn">
+                        <i class="bi bi-envelope me-1"></i>Contact Urooj
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <p class="contact-note">
+            Need to get in touch? Contact any team member directly via their email above.
+        </p>
+    </div>
+</div>
+
+{% endblock %}

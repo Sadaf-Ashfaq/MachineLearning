@@ -1,0 +1,150 @@
+{% extends "common/base.html" %}
+{% block title %}Chat - {{ chat_type|title }} Assistant{% endblock %}
+
+{% block content %}
+<style>
+.chat-window {
+    background-color: #4D4738; /* Forest */
+    color: #BAB9A7; /* Olive */
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 700px;
+    margin: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.chat-window h4 {
+    text-align: center;
+    color: #C0AE94; /* Sand */
+    margin-bottom: 20px;
+}
+
+.chat-log {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 15px;
+    background-color: #755F4A; /* Aloe */
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.chat-log .msg {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.chat-log .msg.user {
+    background-color: #BAB9A7;
+    color: #4D4738;
+    text-align: right;
+}
+
+.chat-log .msg.assistant {
+    background-color: #C0AE94;
+    color: #4D4738;
+    text-align: left;
+}
+
+.chat-form {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.chat-form input[type="text"] {
+    flex: 1;
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+    background-color: #BAB9A7;
+    color: #4D4738;
+}
+
+.chat-form button {
+    background-color: #C0AE94;
+    color: #4D4738;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.chat-form button:hover {
+    background-color: #A59582;
+}
+
+.clear-btn {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+}
+
+.clear-btn button {
+    background-color: transparent;
+    border: 2px solid #BAB9A7;
+    color: #BAB9A7;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+}
+
+.clear-btn button:hover {
+    background-color: #BAB9A7;
+    color: #4D4738;
+}
+</style>
+
+<div class="chat-window">
+    <h4>{{ chat_type|title }} Assistant</h4>
+    
+    <div class="chat-log" id="chat-log">
+        {% for msg in history %}
+        <div class="msg {{ msg.role }}">
+            <strong>{{ msg.role|title }}:</strong> {{ msg.text }}
+        </div>
+        {% endfor %}
+    </div>
+
+    <form method="POST" class="chat-form">
+        {% csrf_token %}
+        <input id="chat-input" type="text" name="message" required placeholder="Type your message..." />
+        <button type="submit">Send</button>
+        <button type="button" onclick="startMic()">
+  <img src="https://img.icons8.com/?size=100&id=59836&format=png&color=000000" alt="Mic Icon" width="24" height="24"/> 
+</button>
+    </form>
+
+    <div class="clear-btn">
+        <form method="POST" action="{% url 'clear_chat' chat_type=chat_type %}">
+            {% csrf_token %}
+            <button type="submit" onclick="return confirm('Are you sure you want to clear the chat?')">
+                Clear Chat
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function startMic() {
+    const input = document.getElementById('chat-input');
+    const recog = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recog.onresult = e => input.value = e.results[0][0].transcript;
+    recog.start();
+}
+
+function speakBotReply(text) {
+    const synth = window.speechSynthesis;
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'en-US';
+    utter.rate = 1;
+    synth.speak(utter);
+}
+
+</script>
+{% endblock %}

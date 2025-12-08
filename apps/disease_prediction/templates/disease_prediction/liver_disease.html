@@ -1,0 +1,246 @@
+{% extends 'common/base.html' %}
+
+{% block title %}Liver Disease Prediction{% endblock %}
+
+{% block content %}
+<style>
+    .prediction-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .form-card {
+        background-color: #4D4738 !important;
+        border: 3px solid #C0AE94 !important;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 4px 15px rgba(77, 71, 59, 0.3);
+    }
+    
+    .form-card h2 {
+        color: #C0AE94 !important;
+        font-weight: 600;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+    
+    .form-label {
+        color: #C0AE94 !important;
+        font-weight: 500;
+        margin-bottom: 8px;
+    }
+    
+    .form-control {
+        background-color: #BAB9A7 !important;
+        border: 2px solid #C0AE94 !important;
+        color: #4D4738 !important;
+        border-radius: 8px;
+        padding: 10px;
+    }
+    
+    .form-control:focus {
+        background-color: #BAB9A7 !important;
+        border-color: #755F4A !important;
+        box-shadow: 0 0 0 0.2rem rgba(117, 95, 74, 0.25);
+        color: #4D4738 !important;
+    }
+    
+    .form-select {
+        background-color: #BAB9A7 !important;
+        border: 2px solid #C0AE94 !important;
+        color: #4D4738 !important;
+        border-radius: 8px;
+    }
+    
+    .btn-predict-submit {
+        background-color: #755F4A !important;
+        color: white !important;
+        border: 2px solid #C0AE94 !important;
+        border-radius: 8px;
+        padding: 12px 40px;
+        font-weight: 500;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-predict-submit:hover {
+        background-color: #BAB9A7 !important;
+        color: #4D4738 !important;
+        border-color: #4D4738 !important;
+        transform: translateY(-3px);
+        box-shadow: 0 4px 15px rgba(186, 185, 167, 0.4);
+    }
+    
+    .result-card {
+        background-color: #4D4738;
+        border: 3px solid #C0AE94;
+        border-radius: 15px;
+        padding: 30px;
+        margin-top: 30px;
+        text-align: center;
+    }
+    
+    .result-success {
+        border-color: #28a745 !important;
+    }
+    
+    .result-danger {
+        border-color: #dc3545 !important;
+    }
+    
+    .result-card h3 {
+        color: #C0AE94;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+    
+    .result-card .prediction-text {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+    
+    .result-card .risk-text {
+        font-size: 1.2rem;
+        color: #C0AE94;
+    }
+    
+    .text-success-custom {
+        color: #28a745 !important;
+    }
+    
+    .text-danger-custom {
+        color: #dc3545 !important;
+    }
+</style>
+
+<div class="prediction-container">
+    <div class="form-card">
+        <h2><i class="bi bi-activity"></i> Liver Disease Prediction</h2>
+        
+        <form method="POST">
+            {% csrf_token %}
+            
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label class="form-label">Age (Years)</label>
+        <input type="number" name="age" class="form-control" required 
+               min="4" max="90" step="1" 
+               placeholder="4 - 90">
+        <small class="text-muted" style="color: #C0AE94 !important;">Range: 4-90 years</small>
+    </div>
+    
+    <div class="col-md-6 mb-3">
+        <label class="form-label">Gender</label>
+        <select name="gender" class="form-select" required>
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+        </select>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label class="form-label">Total Bilirubin (mg/dL)</label>
+        <input type="number" name="total_bilirubin" class="form-control" required 
+               min="0.1" max="75" step="0.1" 
+               placeholder="0.4 - 75">
+        <small class="text-muted" style="color: #C0AE94 !important;">Normal: 0.3-1.2</small>
+    </div>
+    
+    <div class="col-md-6 mb-3">
+        <label class="form-label">Direct Bilirubin (mg/dL)</label>
+        <input type="number" name="direct_bilirubin" class="form-control" required 
+               min="0.1" max="20" step="0.1" 
+               placeholder="0.1 - 19.7">
+        <small class="text-muted" style="color: #C0AE94 !important;">Normal: 0-0.3</small>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label class="form-label">Alkaline Phosphotase (IU/L)</label>
+        <input type="number" name="alkaline_phosphotase" class="form-control" required 
+               min="50" max="2200" step="1" 
+               placeholder="63 - 2110">
+        <small class="text-muted" style="color: #C0AE94 !important;">Normal: 44-147</small>
+    </div>
+    
+    <div class="col-md-6 mb-3">
+        <label class="form-label">Alamine Aminotransferase (IU/L)</label>
+        <input type="number" name="alamine_aminotransferase" class="form-control" required 
+               min="10" max="2000" step="1" 
+               placeholder="10 - 2000">
+        <small class="text-muted" style="color: #C0AE94 !important;">Normal: 7-56</small>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label class="form-label">Aspartate Aminotransferase (IU/L)</label>
+        <input type="number" name="aspartate_aminotransferase" class="form-control" required 
+               min="10" max="5000" step="1" 
+               placeholder="10 - 4929">
+        <small class="text-muted" style="color: #C0AE94 !important;">Normal: 10-40</small>
+    </div>
+    
+    <div class="col-md-6 mb-3">
+        <label class="form-label">Total Proteins (g/dL)</label>
+        <input type="number" name="total_proteins" class="form-control" required 
+               min="2" max="10" step="0.1" 
+               placeholder="2.7 - 9.6">
+        <small class="text-muted" style="color: #C0AE94 !important;">Normal: 6-8.3</small>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label class="form-label">Albumin (g/dL)</label>
+        <input type="number" name="albumin" class="form-control" required 
+               min="0.5" max="6" step="0.1" 
+               placeholder="0.9 - 5.5">
+        <small class="text-muted" style="color: #C0AE94 !important;">Normal: 3.5-5.5</small>
+    </div>
+    
+    <div class="col-md-6 mb-3">
+        <label class="form-label">A/G Ratio</label>
+        <input type="number" name="ag_ratio" class="form-control" required 
+               min="0.3" max="3" step="0.1" 
+               placeholder="0.3 - 2.8">
+        <small class="text-muted" style="color: #C0AE94 !important;">Normal: 1-2.5</small>
+    </div>
+</div>
+            
+            <button type="submit" class="btn btn-predict-submit mt-3">
+                <i class="bi bi-calculator"></i> Predict Disease Risk
+            </button>
+        </form>
+    </div>
+    
+    {% if result %}
+    <div class="result-card {% if result.status == 'success' %}result-success{% else %}result-danger{% endif %}">
+        <h3><i class="bi bi-clipboard2-pulse"></i> Prediction Result</h3>
+        
+        {% if result.error %}
+            <p class="text-danger-custom">Error: {{ result.error }}</p>
+        {% else %}
+            <p class="prediction-text {% if result.status == 'success' %}text-success-custom{% else %}text-danger-custom{% endif %}">
+                {{ result.prediction }}
+            </p>
+            <p class="risk-text">Risk Probability: <strong>{{ result.risk_percentage }}%</strong></p>
+            
+            {% if result.status == 'danger' %}
+                <p class="text-danger-custom mt-3">
+                    <i class="bi bi-exclamation-triangle"></i> Please consult a doctor for proper diagnosis.
+                </p>
+            {% else %}
+                <p class="text-success-custom mt-3">
+                    <i class="bi bi-check-circle"></i> Keep maintaining a healthy lifestyle!
+                </p>
+            {% endif %}
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+# Hide environment variables and secrets
+.env
+env/
+venv/
+.venv/
+
+# Hide Django database and cache files
+*.pyc
+__pycache__/
+db.sqlite3
+*.sqlite3
+
+# Hide static and media files
+staticfiles/
+media/
+
+# Hide IDE files
+.vscode/
+.idea/
+
+# Hide system files
+.DS_Store
+Thumbs.db
+
+# Hide logs
+*.log
