@@ -1,12 +1,12 @@
 {% extends 'common/base.html' %}
 
-{% block title %}Nutrient Deficiency Prediction{% endblock %}
+{% block title %}Disease Prediction{% endblock %}
 
 {% block content %}
 <div class="container text-center mt-5">
-    <h2><i class="bi bi-egg-fill"></i> Nutrient Deficiency Prediction</h2>
+    <h2><i class="bi bi-clipboard2-pulse-fill"></i> Disease Prediction</h2>
     <p class="mt-4">Model training in progress...</p>
-    <p>This feature will predict nutrient deficiencies based on symptoms and diet.</p>
+    <p>This feature will predict common diseases based on symptoms.</p>
     <a href="{% url 'disease_prediction:index' %}" class="btn btn-secondary mt-3">
         <i class="bi bi-arrow-left"></i> Back to Dashboard
     </a>

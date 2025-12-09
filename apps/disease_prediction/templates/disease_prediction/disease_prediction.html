@@ -90,107 +90,106 @@
     </div>
     
     <div class="row mt-4">
-        <!-- 1. Disease Prediction (General) -->
-        <div class="col-md-3 col-sm-6 mb-4">
-            <div class="card disease-card">
-                <div class="card-body text-center">
-                    <i class="bi bi-clipboard2-pulse-fill card-icon"></i>
-                    <h5>Disease Prediction</h5>
-                    <button class="btn btn-predict">
-                        <i class="bi bi-arrow-right-circle"></i> Predict
-                    </button>
-                </div>
+    <!-- 1. Disease Prediction (General) -->
+    <div class="col-md-3 col-sm-6 mb-4">
+        <div class="card disease-card">
+            <div class="card-body text-center">
+                <i class="bi bi-clipboard2-pulse-fill card-icon"></i>
+                <h5>Disease Prediction</h5>
+                <a href="{% url 'disease_prediction:disease_prediction' %}" class="btn btn-predict">
+                    <i class="bi bi-arrow-right-circle"></i> Predict
+                </a>
             </div>
         </div>
-        
-        <!-- 2. Diabetes Risk -->
-        <div class="col-md-3 col-sm-6 mb-4">
-            <div class="card disease-card">
-                <div class="card-body text-center">
-                    <i class="bi bi-droplet-fill card-icon"></i>
-                    <h5>Diabetes Risk</h5>
-                    <button class="btn btn-predict">
-                        <i class="bi bi-arrow-right-circle"></i> Predict
-                    </button>
-                </div>
+    </div>
+    
+    <!-- 2. Diabetes Risk -->
+    <div class="col-md-3 col-sm-6 mb-4">
+        <div class="card disease-card">
+            <div class="card-body text-center">
+                <i class="bi bi-droplet-fill card-icon"></i>
+                <h5>Diabetes Risk</h5>
+                <a href="{% url 'disease_prediction:diabetes_risk' %}" class="btn btn-predict">
+                    <i class="bi bi-arrow-right-circle"></i> Predict
+                </a>
             </div>
         </div>
-        
-        <!-- 3. Heart Disease -->
-        <div class="col-md-3 col-sm-6 mb-4">
-            <div class="card disease-card">
-                <div class="card-body text-center">
-                    <i class="bi bi-heart-fill card-icon"></i>
-                    <h5>Heart Disease</h5>
-                    <button class="btn btn-predict">
-                        <i class="bi bi-arrow-right-circle"></i> Predict
-                    </button>
-                </div>
+    </div>
+    
+    <!-- 3. Heart Disease -->
+    <div class="col-md-3 col-sm-6 mb-4">
+        <div class="card disease-card">
+            <div class="card-body text-center">
+                <i class="bi bi-heart-fill card-icon"></i>
+                <h5>Heart Disease</h5>
+                <a href="{% url 'disease_prediction:heart_disease' %}" class="btn btn-predict">
+                    <i class="bi bi-arrow-right-circle"></i> Predict
+                </a>
             </div>
         </div>
-        
-        <!-- 4. Kidney Disease -->
-        <div class="col-md-3 col-sm-6 mb-4">
-            <div class="card disease-card">
-                <div class="card-body text-center">
-                    <i class="bi bi-capsule-pill card-icon"></i>
-                    <h5>Kidney Disease</h5>
-                    <button class="btn btn-predict">
-                        <i class="bi bi-arrow-right-circle"></i> Predict
-                    </button>
-                </div>
+    </div>
+    
+    <!-- 4. Kidney Disease -->
+    <div class="col-md-3 col-sm-6 mb-4">
+        <div class="card disease-card">
+            <div class="card-body text-center">
+                <i class="bi bi-capsule-pill card-icon"></i>
+                <h5>Kidney Disease</h5>
+                <a href="{% url 'disease_prediction:kidney_disease' %}" class="btn btn-predict">
+                    <i class="bi bi-arrow-right-circle"></i> Predict
+                </a>
             </div>
         </div>
-        
-        <!-- 5. Liver Disease -->
-        <div class="col-md-3 col-sm-6 mb-4">
-            <div class="card disease-card">
-                <div class="card-body text-center">
-                    <i class="bi bi-activity card-icon"></i>
-                    <h5>Liver Disease</h5>
-                    <a href="{% url 'disease_prediction:liver_disease' %}" class="btn btn-predict">
-                        <i class="bi bi-arrow-right-circle"></i> Predict
-                    </a>
-                </div>
+    </div>
+    
+    <!-- 5. Liver Disease -->
+    <div class="col-md-3 col-sm-6 mb-4">
+        <div class="card disease-card">
+            <div class="card-body text-center">
+                <i class="bi bi-activity card-icon"></i>
+                <h5>Liver Disease</h5>
+                <a href="{% url 'disease_prediction:liver_disease' %}" class="btn btn-predict">
+                    <i class="bi bi-arrow-right-circle"></i> Predict
+                </a>
             </div>
         </div>
-        
-        <!-- 6. Nutrient Deficiency -->
-        <div class="col-md-3 col-sm-6 mb-4">
-            <div class="card disease-card">
-                <div class="card-body text-center">
-                    <i class="bi bi-egg-fill card-icon"></i>
-                    <h5>Nutrient Deficiency</h5>
-                    <a href="{% url 'disease_prediction:nutrient_deficiency' %}" class="btn btn-predict">
-                        <i class="bi bi-arrow-right-circle"></i> Predict
-                    </a>
-                </div>
+    </div>
+    
+    <!-- 6. Nutrient Deficiency -->
+    <div class="col-md-3 col-sm-6 mb-4">
+        <div class="card disease-card">
+            <div class="card-body text-center">
+                <i class="bi bi-egg-fill card-icon"></i>
+                <h5>Nutrient Deficiency</h5>
+                <a href="{% url 'disease_prediction:nutrient_deficiency' %}" class="btn btn-predict">
+                    <i class="bi bi-arrow-right-circle"></i> Predict
+                </a>
             </div>
         </div>
-        
-        <!-- 7. Lifestyle Score -->
-        <div class="col-md-3 col-sm-6 mb-4">
-            <div class="card disease-card">
-                <div class="card-body text-center">
-                    <i class="bi bi-graph-up-arrow card-icon"></i>
-                    <h5>Lifestyle Score</h5>
-                    <button class="btn btn-predict">
-                        <i class="bi bi-arrow-right-circle"></i> Analyze
-                    </button>
-                </div>
+    </div>
+    
+    <!-- 7. Lifestyle Score -->
+    <div class="col-md-3 col-sm-6 mb-4">
+        <div class="card disease-card">
+            <div class="card-body text-center">
+                <i class="bi bi-graph-up-arrow card-icon"></i>
+                <h5>Lifestyle Score</h5>
+                <a href="{% url 'disease_prediction:lifestyle_score' %}" class="btn btn-predict">
+                    <i class="bi bi-arrow-right-circle"></i> Analyze
+                </a>
             </div>
         </div>
-        
-        <!-- 8. Symptom Severity -->
-        <div class="col-md-3 col-sm-6 mb-4">
-            <div class="card disease-card">
-                <div class="card-body text-center">
-                    <i class="bi bi-thermometer-half card-icon"></i>
-                    <h5>Symptom Severity</h5>
-                    <button class="btn btn-predict">
-                        <i class="bi bi-arrow-right-circle"></i> Check
-                    </button>
-                </div>
+    </div>
+    
+    <!-- 8. Symptom Severity -->
+    <div class="col-md-3 col-sm-6 mb-4">
+        <div class="card disease-card">
+            <div class="card-body text-center">
+                <i class="bi bi-thermometer-half card-icon"></i>
+                <h5>Symptom Severity</h5>
+                <a href="{% url 'disease_prediction:symptom_severity' %}" class="btn btn-predict">
+                    <i class="bi bi-arrow-right-circle"></i> Check
+                </a>
             </div>
         </div>
     </div>
