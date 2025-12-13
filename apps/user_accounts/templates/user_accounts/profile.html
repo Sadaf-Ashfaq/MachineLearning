@@ -3,6 +3,7 @@
 {% get_media_prefix as MEDIA_URL %}
 {% block title %}User Profile{% endblock %}
 {% block content %}
+{% url 'health_records' as health_records_url %}
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap');
   
@@ -496,7 +497,7 @@
                 <button class="btn btn-forest mt-2" data-bs-toggle="collapse" data-bs-target="#editProfile">
                 <i class="bi bi-pencil-square me-2"></i>Edit Profile Information
             </button>
-            <button class="btn btn-forest mt-2 glow-btn" onclick="window.location.href='{% url 'health_records' %}'">
+            <button class="btn btn-forest mt-2 glow-btn" onclick="window.location.href='{{ health_records_url }}'">
                 <i class="bi bi-file-medical me-2"></i>View Health Records
             </button>
             </div>    
@@ -665,10 +666,10 @@ document.addEventListener("DOMContentLoaded", function () {
             new Chart(ctx, {
                 type: "{{ chart_data.type }}",
                 data: {
-                    labels: {{ chart_data.labels|default:"[]"|safe }},
+                    labels: JSON.parse('{{ chart_data.labels|default:"[]"|escapejs }}'),
                     datasets: [{
                         label: "{{ chart_data.label }}",
-                        data: {{ chart_data.data|default:"[]"|safe }},
+                        data: JSON.parse('{{ chart_data.data|default:"[]"|escapejs }}'),
                         borderColor: "{{ chart_data.color }}",
                         backgroundColor: gradient,
                         borderWidth: 3,
@@ -679,7 +680,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         pointBorderColor: "#ffffff",
                         pointBorderWidth: 2
                     }]
-                },
+                                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
@@ -784,7 +785,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Custom alert function
+   // Custom alert function
     function showCustomAlert(message) {
         // Remove any existing custom alerts
         const existingAlerts = document.querySelectorAll('.custom-validation-alert');
