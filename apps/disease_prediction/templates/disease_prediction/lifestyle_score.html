@@ -3,12 +3,250 @@
 {% block title %}Lifestyle Score Analysis{% endblock %}
 
 {% block content %}
-<div class="container text-center mt-5">
-    <h2><i class="bi bi-graph-up-arrow"></i> Lifestyle Score Analysis</h2>
-    <p class="mt-4">Model training in progress...</p>
-    <p>This feature will analyze your lifestyle habits and provide a health score.</p>
-    <a href="{% url 'disease_prediction:index' %}" class="btn btn-secondary mt-3">
-        <i class="bi bi-arrow-left"></i> Back to Dashboard
-    </a>
+<style>
+    .prediction-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    .form-card {
+        background-color: #4D4738 !important;
+        border: 3px solid #C0AE94 !important;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 4px 15px rgba(77, 71, 59, 0.3);
+    }
+    
+    .form-card h2 {
+        color: #C0AE94 !important;
+        font-weight: 600;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+    
+    .form-label {
+        color: #C0AE94 !important;
+        font-weight: 500;
+        margin-bottom: 8px;
+    }
+    
+    .form-control, .form-range {
+        background-color: #BAB9A7 !important;
+        border: 2px solid #C0AE94 !important;
+        color: #4D4738 !important;
+        border-radius: 8px;
+        padding: 10px;
+    }
+    
+    .form-control:focus {
+        background-color: #BAB9A7 !important;
+        border-color: #755F4A !important;
+        box-shadow: 0 0 0 0.2rem rgba(117, 95, 74, 0.25);
+        color: #4D4738 !important;
+    }
+    
+    .btn-predict-submit {
+        background-color: #755F4A !important;
+        color: white !important;
+        border: 2px solid #C0AE94 !important;
+        border-radius: 8px;
+        padding: 12px 40px;
+        font-weight: 500;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-predict-submit:hover {
+        background-color: #BAB9A7 !important;
+        color: #4D4738 !important;
+        border-color: #4D4738 !important;
+        transform: translateY(-3px);
+        box-shadow: 0 4px 15px rgba(186, 185, 167, 0.4);
+    }
+    
+    .result-card {
+        background-color: #4D4738;
+        border: 3px solid #C0AE94;
+        border-radius: 15px;
+        padding: 40px;
+        margin-top: 30px;
+        text-align: center;
+    }
+    
+    .result-card h3 {
+        color: #C0AE94;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+    
+    .score-display {
+        font-size: 4rem;
+        font-weight: bold;
+        margin: 20px 0;
+    }
+    
+    .status-badge {
+        font-size: 1.5rem;
+        padding: 10px 30px;
+        border-radius: 50px;
+        font-weight: 600;
+        display: inline-block;
+        margin: 20px 0;
+    }
+    
+    .status-good {
+        background-color: #28a745;
+        color: white;
+    }
+    
+    .status-average {
+        background-color: #ffc107;
+        color: #333;
+    }
+    
+    .status-poor {
+        background-color: #dc3545;
+        color: white;
+    }
+    
+    .message-text {
+        color: #C0AE94;
+        font-size: 1.2rem;
+        margin-top: 20px;
+    }
+    
+    small.text-muted {
+        color: #C0AE94 !important;
+        font-size: 0.85rem;
+    }
+</style>
+
+<div class="prediction-container">
+    <div class="form-card">
+        <h2><i class="bi bi-graph-up-arrow"></i> Lifestyle Score Analysis</h2>
+        
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Physical Activity (hours/week)</label>
+                    <input type="number" name="physical_activity" class="form-control" required 
+                           min="0" max="120" step="0.1" 
+                           placeholder="0 - 120">
+                    <small class="text-muted">How many hours per week do you exercise?</small>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Nutrition Score (0-10)</label>
+                    <input type="number" name="nutrition_score" class="form-control" required 
+                           min="0" max="10" step="0.1" 
+                           placeholder="0 - 10">
+                    <small class="text-muted">Rate your diet quality (0=Poor, 10=Excellent)</small>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Stress Level (1-10)</label>
+                    <input type="number" name="stress_level" class="form-control" required 
+                           min="1" max="10" step="0.1" 
+                           placeholder="1 - 10">
+                    <small class="text-muted">Rate your stress (1=Low, 10=High)</small>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Mindfulness (hours/week)</label>
+                    <input type="number" name="mindfulness" class="form-control" required 
+                           min="0" max="52" step="0.1" 
+                           placeholder="0 - 52">
+                    <small class="text-muted">Meditation, yoga, or relaxation time</small>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Sleep Hours (per night)</label>
+                    <input type="number" name="sleep_hours" class="form-control" required 
+                           min="3" max="10" step="0.1" 
+                           placeholder="3 - 10">
+                    <small class="text-muted">Average sleep duration</small>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Hydration (liters/day)</label>
+                    <input type="number" name="hydration" class="form-control" required 
+                           min="0.5" max="5" step="0.1" 
+                           placeholder="0.5 - 5">
+                    <small class="text-muted">Water intake per day</small>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">BMI (Body Mass Index)</label>
+                    <input type="number" name="bmi" class="form-control" required 
+                           min="18" max="36.5" step="0.1" 
+                           placeholder="18 - 36.5">
+                    <small class="text-muted">Weight(kg) / Height(m)²</small>
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Alcohol (units/week)</label>
+                    <input type="number" name="alcohol" class="form-control" required 
+                           min="0" max="18" step="0.1" 
+                           placeholder="0 - 18">
+                    <small class="text-muted">Standard drinks per week</small>
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Smoking (cigarettes/day)</label>
+                    <input type="number" name="smoking" class="form-control" required 
+                           min="0" max="28" step="0.1" 
+                           placeholder="0 - 28">
+                    <small class="text-muted">Daily cigarette consumption</small>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-predict-submit mt-3">
+                <i class="bi bi-calculator"></i> Calculate Lifestyle Score
+            </button>
+        </form>
+    </div>
+    
+    {% if result %}
+    <div class="result-card">
+        <h3><i class="bi bi-clipboard2-pulse"></i> Your Lifestyle Score</h3>
+        
+        {% if result.error %}
+            <p style="color: #dc3545; font-size: 1.2rem;">Error: {{ result.error }}</p>
+        {% else %}
+            <div class="score-display" style="color: {% if result.status == 'Good' %}#28a745{% elif result.status == 'Average' %}#ffc107{% else %}#dc3545{% endif %};">
+                {{ result.score }}/100
+            </div>
+            
+            <div class="status-badge status-{{ result.status|lower }}">
+                {{ result.status }}
+            </div>
+            
+            <p class="message-text">
+                <i class="bi bi-info-circle"></i> {{ result.message }}
+            </p>
+            
+            <div style="margin-top: 30px; color: #C0AE94;">
+                <h5>Score Breakdown:</h5>
+                <p>
+                    {% if result.status == 'Good' %}
+                        <i class="bi bi-check-circle-fill" style="color: #28a745;"></i> Excellent! (75-100 points)
+                    {% elif result.status == 'Average' %}
+                        <i class="bi bi-exclamation-circle-fill" style="color: #ffc107;"></i> Good! (50-74 points)
+                    {% else %}
+                        <i class="bi bi-x-circle-fill" style="color: #dc3545;"></i> Needs Improvement (0-49 points)
+                    {% endif %}
+                </p>
+            </div>
+        {% endif %}
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

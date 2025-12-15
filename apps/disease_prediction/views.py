@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .ml_utils import predict_liver_disease
+from .ml_utils import predict_liver_disease, predict_lifestyle_score
 
 def index(request):
     return render(request, 'disease_prediction/disease_prediction.html')
@@ -20,7 +20,7 @@ def heart_disease(request):
 def kidney_disease(request):
     return render(request, 'disease_prediction/kidney_disease.html')
 
-# 5. Liver Disease (Already working with ML model)
+# 5. Liver Disease (Working with ML model)
 def liver_disease(request):
     result = None
     
@@ -46,9 +46,26 @@ def liver_disease(request):
 def nutrient_deficiency(request):
     return render(request, 'disease_prediction/nutrient_deficiency.html')
 
-# 7. Lifestyle Score
+# 7. Lifestyle Score (NEW - Working with ML model)
 def lifestyle_score(request):
-    return render(request, 'disease_prediction/lifestyle_score.html')
+    result = None
+    
+    if request.method == 'POST':
+        data = {
+            'physical_activity': float(request.POST.get('physical_activity')),
+            'nutrition_score': float(request.POST.get('nutrition_score')),
+            'stress_level': float(request.POST.get('stress_level')),
+            'mindfulness': float(request.POST.get('mindfulness')),
+            'sleep_hours': float(request.POST.get('sleep_hours')),
+            'hydration': float(request.POST.get('hydration')),
+            'bmi': float(request.POST.get('bmi')),
+            'alcohol': float(request.POST.get('alcohol')),
+            'smoking': float(request.POST.get('smoking'))
+        }
+        
+        result = predict_lifestyle_score(data)
+    
+    return render(request, 'disease_prediction/lifestyle_score.html', {'result': result})
 
 # 8. Symptom Severity
 def symptom_severity(request):

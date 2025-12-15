@@ -7,7 +7,10 @@ import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_DIR = os.path.join(BASE_DIR, 'ml_models', 'trained_models')
 
-# Load model and preprocessors
+# ============================================================
+# LIVER DISEASE FUNCTIONS
+# ============================================================
+
 def load_liver_model():
     model_path = os.path.join(MODEL_DIR, 'liver_disease_model.pkl')
     scaler_path = os.path.join(MODEL_DIR, 'scaler.pkl')
@@ -78,6 +81,94 @@ def predict_liver_disease(data):
             'prediction': 'Disease Detected' if prediction == 1 else 'Healthy',
             'risk_percentage': round(risk_probability, 2),
             'status': 'danger' if prediction == 1 else 'success'
+        }
+        
+        return result
+    
+    except Exception as e:
+        return {'error': str(e)}
+
+
+# ============================================================
+# LIFESTYLE SCORE FUNCTIONS
+# ============================================================
+
+def load_lifestyle_model():
+    model_path = os.path.join(MODEL_DIR, 'lifestyle_model.pkl')
+    scaler_path = os.path.join(MODEL_DIR, 'lifestyle_scaler.pkl')
+    features_path = os.path.join(MODEL_DIR, 'lifestyle_features.pkl')
+    
+    with open(model_path, 'rb') as f:
+        model = pickle.load(f)
+    with open(scaler_path, 'rb') as f:
+        scaler = pickle.load(f)
+    with open(features_path, 'rb') as f:
+        feature_columns = pickle.load(f)
+    
+    return model, scaler, feature_columns
+
+def predict_lifestyle_score(data):
+    """
+    data = {
+        'physical_activity': 45.5,
+        'nutrition_score': 7.2,
+        'stress_level': 4.5,
+        'mindfulness': 15.3,
+        'sleep_hours': 7.5,
+        'hydration': 2.8,
+        'bmi': 23.5,
+        'alcohol': 3.2,
+        'smoking': 0.0
+    }
+    """
+    try:
+        # Load model and preprocessors
+        model, scaler, feature_columns = load_lifestyle_model()
+        
+        # Create feature array in correct order
+        features = [
+            data['physical_activity'],
+            data['nutrition_score'],
+            data['stress_level'],
+            data['mindfulness'],
+            data['sleep_hours'],
+            data['hydration'],
+            data['bmi'],
+            data['alcohol'],
+            data['smoking']
+        ]
+        
+        # Convert to DataFrame with correct column names
+        feature_df = pd.DataFrame([features], columns=feature_columns)
+        
+        # Scale features
+        features_scaled = scaler.transform(feature_df)
+        
+        # Predict
+        score = model.predict(features_scaled)[0]
+        
+        # Clip score to 0-100 range (just in case)
+        score = max(0, min(100, score))
+        
+        # Determine health status based on score
+        if score >= 75:
+            status = 'Good'
+            status_color = 'success'
+            message = 'Excellent lifestyle! Keep it up!'
+        elif score >= 50:
+            status = 'Average'
+            status_color = 'warning'
+            message = 'Good progress! Some improvements needed.'
+        else:
+            status = 'Poor'
+            status_color = 'danger'
+            message = 'Needs significant improvement. Consult a health professional.'
+        
+        result = {
+            'score': round(score, 2),
+            'status': status,
+            'status_color': status_color,
+            'message': message
         }
         
         return result
