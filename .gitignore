@@ -24,3 +24,5 @@ Thumbs.db
 
 # Hide logs
 *.log
+ml-model/datasets/*.csv
+ml-model/datasets/*.xlsx
