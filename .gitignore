@@ -26,3 +26,9 @@ Thumbs.db
 *.log
 ml-model/datasets/*.csv
 ml-model/datasets/*.xlsx
+
+.vs/
+venv/
+
+apps/disease_prediction/ml_models/datasets/
+apps/disease_prediction/ml_models/trained_models/
