@@ -175,3 +175,131 @@ def predict_lifestyle_score(data):
     
     except Exception as e:
         return {'error': str(e)}
+
+
+# ============================================================
+# OBESITY PREDICTION FUNCTIONS
+# ============================================================
+
+def load_obesity_model():
+    model_path = os.path.join(MODEL_DIR, 'obesity_model.pkl')
+    scaler_path = os.path.join(MODEL_DIR, 'obesity_scaler.pkl')
+    target_encoder_path = os.path.join(MODEL_DIR, 'obesity_target_encoder.pkl')
+    label_encoders_path = os.path.join(MODEL_DIR, 'obesity_label_encoders.pkl')
+    features_path = os.path.join(MODEL_DIR, 'obesity_features.pkl')
+    
+    with open(model_path, 'rb') as f:
+        model = pickle.load(f)
+    with open(scaler_path, 'rb') as f:
+        scaler = pickle.load(f)
+    with open(target_encoder_path, 'rb') as f:
+        target_encoder = pickle.load(f)
+    with open(label_encoders_path, 'rb') as f:
+        label_encoders = pickle.load(f)
+    with open(features_path, 'rb') as f:
+        feature_columns = pickle.load(f)
+    
+    return model, scaler, target_encoder, label_encoders, feature_columns
+
+def predict_obesity(data):
+    """
+    data = {
+        'gender': 'Male',
+        'age': 25,
+        'height': 1.75,
+        'weight': 80.5,
+        'family_history': 'yes',
+        'favc': 'yes',
+        'fcvc': 2.5,
+        'ncp': 3,
+        'caec': 'Sometimes',
+        'smoke': 'no',
+        'ch2o': 2.0,
+        'scc': 'no',
+        'faf': 1.5,
+        'tue': 1.0,
+        'calc': 'Sometimes',
+        'mtrans': 'Public_Transportation'
+    }
+    """
+    try:
+        # Load model and preprocessors
+        model, scaler, target_encoder, label_encoders, feature_columns = load_obesity_model()
+        
+        # Calculate BMI
+        bmi = data['weight'] / (data['height'] ** 2)
+        
+        # Encode categorical features
+        gender_encoded = label_encoders['Gender'].transform([data['gender']])[0]
+        family_history_encoded = label_encoders['family_history'].transform([data['family_history']])[0]
+        favc_encoded = label_encoders['FAVC'].transform([data['favc']])[0]
+        caec_encoded = label_encoders['CAEC'].transform([data['caec']])[0]
+        smoke_encoded = label_encoders['SMOKE'].transform([data['smoke']])[0]
+        scc_encoded = label_encoders['SCC'].transform([data['scc']])[0]
+        calc_encoded = label_encoders['CALC'].transform([data['calc']])[0]
+        mtrans_encoded = label_encoders['MTRANS'].transform([data['mtrans']])[0]
+        
+        # Create feature array in correct order (matching training)
+        features = [
+            gender_encoded,
+            data['age'],
+            data['height'],
+            data['weight'],
+            family_history_encoded,
+            favc_encoded,
+            data['fcvc'],
+            data['ncp'],
+            caec_encoded,
+            smoke_encoded,
+            data['ch2o'],
+            scc_encoded,
+            data['faf'],
+            data['tue'],
+            calc_encoded,
+            mtrans_encoded,
+            bmi
+        ]
+        
+        # Convert to DataFrame with correct column names
+        feature_df = pd.DataFrame([features], columns=feature_columns)
+        
+        # Scale features
+        features_scaled = scaler.transform(feature_df)
+        
+        # Predict
+        prediction_encoded = model.predict(features_scaled)[0]
+        prediction_label = target_encoder.inverse_transform([prediction_encoded])[0]
+        
+        # Get prediction probabilities
+        probabilities = model.predict_proba(features_scaled)[0]
+        confidence = probabilities[prediction_encoded] * 100
+        
+        # Format prediction label for display
+        prediction_display = prediction_label.replace('_', ' ').title()
+        
+        # Determine status based on prediction
+        if 'Insufficient' in prediction_label:
+            status = 'insufficient'
+            status_color = 'info'
+        elif 'Normal' in prediction_label:
+            status = 'normal'
+            status_color = 'success'
+        elif 'Overweight' in prediction_label:
+            status = 'overweight'
+            status_color = 'warning'
+        else:  # Obesity types
+            status = 'obesity'
+            status_color = 'danger'
+        
+        result = {
+            'prediction': prediction_display,
+            'bmi': round(bmi, 2),
+            'confidence': round(confidence, 2),
+            'status': status,
+            'status_color': status_color
+        }
+        
+        return result
+    
+    except Exception as e:
+        return {'error': str(e)}

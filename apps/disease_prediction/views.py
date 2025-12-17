@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .ml_utils import predict_liver_disease, predict_lifestyle_score
+from .ml_utils import predict_liver_disease, predict_lifestyle_score, predict_obesity
 
 def index(request):
     return render(request, 'disease_prediction/disease_prediction.html')
@@ -42,11 +42,35 @@ def liver_disease(request):
     
     return render(request, 'disease_prediction/liver_disease.html', {'result': result})
 
-# 6. Nutrient Deficiency
-def nutrient_deficiency(request):
-    return render(request, 'disease_prediction/nutrient_deficiency.html')
+# 6. Obesity Prediction (Working with ML model)
+def obesity_prediction(request):
+    result = None
+    
+    if request.method == 'POST':
+        data = {
+            'gender': request.POST.get('gender'),
+            'age': float(request.POST.get('age')),
+            'height': float(request.POST.get('height')),
+            'weight': float(request.POST.get('weight')),
+            'family_history': request.POST.get('family_history'),
+            'favc': request.POST.get('favc'),
+            'fcvc': float(request.POST.get('fcvc')),
+            'ncp': float(request.POST.get('ncp')),
+            'caec': request.POST.get('caec'),
+            'smoke': request.POST.get('smoke'),
+            'ch2o': float(request.POST.get('ch2o')),
+            'scc': request.POST.get('scc'),
+            'faf': float(request.POST.get('faf')),
+            'tue': float(request.POST.get('tue')),
+            'calc': request.POST.get('calc'),
+            'mtrans': request.POST.get('mtrans')
+        }
+        
+        result = predict_obesity(data)
+    
+    return render(request, 'disease_prediction/obesity_prediction.html', {'result': result})
 
-# 7. Lifestyle Score (NEW - Working with ML model)
+# 7. Lifestyle Score (Working with ML model)
 def lifestyle_score(request):
     result = None
     

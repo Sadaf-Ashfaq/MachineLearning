@@ -1,0 +1,397 @@
+{% extends 'common/base.html' %}
+
+{% block title %}Obesity Prediction{% endblock %}
+
+{% block content %}
+<style>
+    .prediction-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    .form-card {
+        background-color: #4D4738 !important;
+        border: 3px solid #C0AE94 !important;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 4px 15px rgba(77, 71, 59, 0.3);
+    }
+    
+    .form-card h2 {
+        color: #C0AE94 !important;
+        font-weight: 600;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+    
+    .form-label {
+        color: #C0AE94 !important;
+        font-weight: 500;
+        margin-bottom: 8px;
+    }
+    
+    .form-control {
+        background-color: #BAB9A7 !important;
+        border: 2px solid #C0AE94 !important;
+        color: #4D4738 !important;
+        border-radius: 8px;
+        padding: 10px;
+    }
+    
+    .form-control:focus {
+        background-color: #BAB9A7 !important;
+        border-color: #755F4A !important;
+        box-shadow: 0 0 0 0.2rem rgba(117, 95, 74, 0.25);
+        color: #4D4738 !important;
+    }
+    
+    .form-select {
+        background-color: #BAB9A7 !important;
+        border: 2px solid #C0AE94 !important;
+        color: #4D4738 !important;
+        border-radius: 8px;
+    }
+    
+    .btn-predict-submit {
+        background-color: #755F4A !important;
+        color: white !important;
+        border: 2px solid #C0AE94 !important;
+        border-radius: 8px;
+        padding: 12px 40px;
+        font-weight: 500;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-predict-submit:hover {
+        background-color: #BAB9A7 !important;
+        color: #4D4738 !important;
+        border-color: #4D4738 !important;
+        transform: translateY(-3px);
+        box-shadow: 0 4px 15px rgba(186, 185, 167, 0.4);
+    }
+    
+    .result-card {
+        background-color: #4D4738;
+        border: 3px solid #C0AE94;
+        border-radius: 15px;
+        padding: 30px;
+        margin-top: 30px;
+        text-align: center;
+    }
+    
+    .result-insufficient {
+        border-color: #17a2b8 !important;
+    }
+    
+    .result-normal {
+        border-color: #28a745 !important;
+    }
+    
+    .result-overweight {
+        border-color: #ffc107 !important;
+    }
+    
+    .result-obesity {
+        border-color: #dc3545 !important;
+    }
+    
+    .result-card h3 {
+        color: #C0AE94;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+    
+    .result-card .prediction-text {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+    
+    .result-card .bmi-text {
+        font-size: 1.2rem;
+        color: #C0AE94;
+        margin-bottom: 10px;
+    }
+    
+    .text-insufficient {
+        color: #17a2b8 !important;
+    }
+    
+    .text-normal {
+        color: #28a745 !important;
+    }
+    
+    .text-overweight {
+        color: #ffc107 !important;
+    }
+    
+    .text-obesity {
+        color: #dc3545 !important;
+    }
+    
+    .info-box {
+        background-color: rgba(192, 174, 148, 0.1);
+        border-left: 4px solid #C0AE94;
+        padding: 15px;
+        margin-top: 20px;
+        border-radius: 5px;
+    }
+    
+    .info-box p {
+        color: #C0AE94;
+        margin: 5px 0;
+        font-size: 0.9rem;
+    }
+</style>
+
+<div class="prediction-container">
+    <div class="form-card">
+        <h2><i class="bi bi-heart-pulse"></i> Obesity Level Prediction</h2>
+        
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Gender</label>
+                    <select name="gender" class="form-select" required>
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Age (Years)</label>
+                    <input type="number" name="age" class="form-control" required 
+                           min="14" max="61" step="1" 
+                           placeholder="14 - 61">
+                    <small class="text-muted" style="color: #C0AE94 !important;">Range: 14-61 years</small>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Height (meters)</label>
+                    <input type="number" name="height" class="form-control" required 
+                           min="1.45" max="1.98" step="0.01" 
+                           placeholder="1.45 - 1.98">
+                    <small class="text-muted" style="color: #C0AE94 !important;">Example: 1.75 for 175cm</small>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Weight (kg)</label>
+                    <input type="number" name="weight" class="form-control" required 
+                           min="39" max="173" step="0.1" 
+                           placeholder="39 - 173">
+                    <small class="text-muted" style="color: #C0AE94 !important;">In kilograms</small>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Family History with Overweight</label>
+                    <select name="family_history" class="form-select" required>
+                        <option value="">Select Option</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">High Caloric Food Consumption (FAVC)</label>
+                    <select name="favc" class="form-select" required>
+                        <option value="">Select Option</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Vegetable Consumption Frequency (FCVC)</label>
+                    <input type="number" name="fcvc" class="form-control" required 
+                           min="1" max="3" step="0.1" 
+                           placeholder="1 - 3">
+                    <small class="text-muted" style="color: #C0AE94 !important;">1=Never, 2=Sometimes, 3=Always</small>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Number of Main Meals (NCP)</label>
+                    <input type="number" name="ncp" class="form-control" required 
+                           min="1" max="4" step="1" 
+                           placeholder="1 - 4">
+                    <small class="text-muted" style="color: #C0AE94 !important;">Per day</small>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Food Between Meals (CAEC)</label>
+                    <select name="caec" class="form-select" required>
+                        <option value="">Select Frequency</option>
+                        <option value="no">No</option>
+                        <option value="Sometimes">Sometimes</option>
+                        <option value="Frequently">Frequently</option>
+                        <option value="Always">Always</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Smoking</label>
+                    <select name="smoke" class="form-select" required>
+                        <option value="">Select Option</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Water Consumption (CH2O)</label>
+                    <input type="number" name="ch2o" class="form-control" required 
+                           min="1" max="3" step="0.1" 
+                           placeholder="1 - 3">
+                    <small class="text-muted" style="color: #C0AE94 !important;">Liters per day</small>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Calorie Monitoring (SCC)</label>
+                    <select name="scc" class="form-select" required>
+                        <option value="">Select Option</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Physical Activity Frequency (FAF)</label>
+                    <input type="number" name="faf" class="form-control" required 
+                           min="0" max="3" step="0.1" 
+                           placeholder="0 - 3">
+                    <small class="text-muted" style="color: #C0AE94 !important;">0=None, 3=Daily</small>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Technology Use Time (TUE)</label>
+                    <input type="number" name="tue" class="form-control" required 
+                           min="0" max="2" step="0.1" 
+                           placeholder="0 - 2">
+                    <small class="text-muted" style="color: #C0AE94 !important;">Hours per day</small>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Alcohol Consumption (CALC)</label>
+                    <select name="calc" class="form-select" required>
+                        <option value="">Select Frequency</option>
+                        <option value="no">No</option>
+                        <option value="Sometimes">Sometimes</option>
+                        <option value="Frequently">Frequently</option>
+                        <option value="Always">Always</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Transportation Mode (MTRANS)</label>
+                    <select name="mtrans" class="form-select" required>
+                        <option value="">Select Mode</option>
+                        <option value="Walking">Walking</option>
+                        <option value="Bike">Bike</option>
+                        <option value="Motorbike">Motorbike</option>
+                        <option value="Public_Transportation">Public Transportation</option>
+                        <option value="Automobile">Automobile</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-predict-submit mt-3">
+                <i class="bi bi-calculator"></i> Predict Obesity Level
+            </button>
+        </form>
+    </div>
+    
+    {% if result %}
+    <div class="result-card 
+        {% if 'Insufficient' in result.prediction %}result-insufficient
+        {% elif 'Normal' in result.prediction %}result-normal
+        {% elif 'Overweight' in result.prediction %}result-overweight
+        {% else %}result-obesity{% endif %}">
+        
+        <h3><i class="bi bi-clipboard2-pulse"></i> Prediction Result</h3>
+        
+        {% if result.error %}
+            <p class="text-obesity">Error: {{ result.error }}</p>
+        {% else %}
+            <p class="prediction-text 
+                {% if 'Insufficient' in result.prediction %}text-insufficient
+                {% elif 'Normal' in result.prediction %}text-normal
+                {% elif 'Overweight' in result.prediction %}text-overweight
+                {% else %}text-obesity{% endif %}">
+                {{ result.prediction }}
+            </p>
+            
+            {% if result.bmi %}
+            <p class="bmi-text">Calculated BMI: <strong>{{ result.bmi }}</strong></p>
+            {% endif %}
+            
+            <div class="info-box">
+                {% if 'Insufficient' in result.prediction %}
+                    <p><i class="bi bi-exclamation-circle"></i> <strong>Underweight Classification</strong></p>
+                    <p>• Consider consulting a nutritionist for a healthy weight gain plan</p>
+                    <p>• Ensure adequate protein and nutrient intake</p>
+                    <p>• Regular health check-ups recommended</p>
+                    
+                {% elif 'Normal' in result.prediction %}
+                    <p><i class="bi bi-check-circle"></i> <strong>Healthy Weight Classification</strong></p>
+                    <p>• Excellent! Maintain your current lifestyle</p>
+                    <p>• Continue balanced diet and regular exercise</p>
+                    <p>• Keep up the good work!</p>
+                    
+                {% elif 'Overweight_Level_I' in result.prediction %}
+                    <p><i class="bi bi-info-circle"></i> <strong>Overweight Level I</strong></p>
+                    <p>• Mild overweight condition detected</p>
+                    <p>• Consider increasing physical activity</p>
+                    <p>• Focus on balanced, portion-controlled meals</p>
+                    <p>• Consult a healthcare provider for guidance</p>
+                    
+                {% elif 'Overweight_Level_II' in result.prediction %}
+                    <p><i class="bi bi-exclamation-triangle"></i> <strong>Overweight Level II</strong></p>
+                    <p>• Moderate overweight condition detected</p>
+                    <p>• Recommended to consult a healthcare provider</p>
+                    <p>• Consider a structured weight management program</p>
+                    <p>• Increase physical activity and improve diet quality</p>
+                    
+                {% elif 'Obesity_Type_I' in result.prediction %}
+                    <p><i class="bi bi-exclamation-triangle-fill"></i> <strong>Obesity Type I (Class I)</strong></p>
+                    <p>• Medical attention recommended</p>
+                    <p>• Consult with healthcare provider for weight management</p>
+                    <p>• May require structured diet and exercise program</p>
+                    <p>• Regular monitoring of health markers advised</p>
+                    
+                {% elif 'Obesity_Type_II' in result.prediction %}
+                    <p><i class="bi bi-exclamation-triangle-fill"></i> <strong>Obesity Type II (Class II)</strong></p>
+                    <p>• Serious health risk - medical attention required</p>
+                    <p>• Consult healthcare provider immediately</p>
+                    <p>• May require comprehensive medical intervention</p>
+                    <p>• Regular health monitoring essential</p>
+                    
+                {% elif 'Obesity_Type_III' in result.prediction %}
+                    <p><i class="bi bi-shield-fill-exclamation"></i> <strong>Obesity Type III (Class III/Severe)</strong></p>
+                    <p>• Critical health risk - immediate medical attention required</p>
+                    <p>• Please consult healthcare provider urgently</p>
+                    <p>• Comprehensive medical intervention necessary</p>
+                    <p>• Close medical supervision strongly recommended</p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
