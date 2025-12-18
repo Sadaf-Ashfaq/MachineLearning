@@ -57,9 +57,6 @@ def diabetes_risk(request):
 def heart_disease(request):
     return render(request, 'disease_prediction/heart_disease.html')
 
-# 4. Kidney Disease
-def kidney_disease(request):
-    return render(request, 'disease_prediction/kidney_disease.html')
 
 # 5. Liver Disease (Working with ML model)
 def liver_disease(request):
@@ -132,6 +129,3 @@ def lifestyle_score(request):
     
     return render(request, 'disease_prediction/lifestyle_score.html', {'result': result})
 
-# 8. Symptom Severity
-def symptom_severity(request):
-    return render(request, 'disease_prediction/symptom_severity.html')
