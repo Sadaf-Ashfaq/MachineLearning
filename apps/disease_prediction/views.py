@@ -1,16 +1,50 @@
 from django.shortcuts import render
-from .ml_utils import predict_liver_disease, predict_lifestyle_score
+from .ml_utils import predict_liver_disease, predict_lifestyle_score, predict_diabetes, predict_stroke
 
 def index(request):
     return render(request, 'disease_prediction/disease_prediction.html')
 
-# 1. Disease Prediction (General)
-def disease_prediction(request):
-    return render(request, 'disease_prediction/disease_prediction_form.html')
+# Stroke Risk Prediction
+def stroke_prediction(request):
+    result = None
+    
+    if request.method == 'POST':
+        data = {
+            'gender': request.POST.get('gender'),
+            'age': float(request.POST.get('age')),
+            'hypertension': int(request.POST.get('hypertension')),
+            'heart_disease': int(request.POST.get('heart_disease')),
+            'ever_married': request.POST.get('ever_married'),
+            'work_type': request.POST.get('work_type'),
+            'Residence_type': request.POST.get('Residence_type'),
+            'avg_glucose_level': float(request.POST.get('avg_glucose_level')),
+            'bmi': float(request.POST.get('bmi')),
+            'smoking_status': request.POST.get('smoking_status')
+        }
+        
+        result = predict_stroke(data)
+    
+    return render(request, 'disease_prediction/stroke_prediction.html', {'result': result})
 
 # 2. Diabetes Risk
 def diabetes_risk(request):
-    return render(request, 'disease_prediction/diabetes_risk.html')
+    result = None
+    
+    if request.method == 'POST':
+        data = {
+            'gender': request.POST.get('gender'),
+            'age': float(request.POST.get('age')),
+            'hypertension': int(request.POST.get('hypertension')),
+            'heart_disease': int(request.POST.get('heart_disease')),
+            'smoking_history': request.POST.get('smoking_history'),
+            'bmi': float(request.POST.get('bmi')),
+            'HbA1c_level': float(request.POST.get('HbA1c_level')),
+            'blood_glucose_level': int(request.POST.get('blood_glucose_level'))
+        }
+        
+        result = predict_diabetes(data)
+    
+    return render(request, 'disease_prediction/diabetes_risk.html', {'result': result})
 
 # 3. Heart Disease
 def heart_disease(request):
