@@ -34,7 +34,7 @@
             transform: scale(1.05);
         }
 
-        .nav-link, .btn-custom {
+        .nav-link {
             color: #C0AE94 !important; /* SAND text */
             font-weight: 500;
             margin: 0 5px;
@@ -42,6 +42,7 @@
             padding: 8px 15px !important;
             transition: all 0.3s ease;
             border: 2px solid transparent;
+            display: inline-block;
         }
         
         html, body {
@@ -135,7 +136,7 @@ body {
                         <a class="nav-link" href="/chatbot/chat/health/"><i class="bi bi-hospital"></i> Health Chat</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/disease_prediction/"><i class="bi bi-activity"></i> Disease Predictions</a>
+                        <a class="nav-link" href="/disease_prediction/"><i class="bi bi-activity"></i> Disease Prediction</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/about/"><i class="bi bi-info-circle"></i> About</a>
@@ -151,9 +152,9 @@ body {
                     </li>
                 </ul>
                 <div class="nav-item">
-                    <form method="POST" action="/accounts/logout/">
+                    <form method="POST" action="/accounts/logout/" style="margin: 0;">
                         {% csrf_token %}
-                        <button class="btn btn-sm btn-logout">
+                        <button class="btn btn-logout">
                             <i class="bi bi-box-arrow-right"></i> Logout
                         </button>
                     </form>

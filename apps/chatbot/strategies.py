@@ -1,18 +1,48 @@
 import os
+import requests
+import json
 
 class AIChatStrategy:
     def __init__(self, system_prompt):
         self.system_prompt = system_prompt
 
     def get_response(self, messages):
-        import google.generativeai as genai
-        genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        from django.conf import settings
+        api_key = settings.GEMINI_API_KEY
+
         
-        # Combine system prompt with user message
+        if not api_key:
+            return "Error: API key not found. Please check your .env file."
+        
+        # Updated to use gemini-2.5-flash
+        url = f"https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key={api_key}"
+
+        
+        headers = {'Content-Type': 'application/json'}
         full_prompt = f"{self.system_prompt}\n\nUser: {messages}"
         
-        return model.generate_content(full_prompt).text
+        data = {
+            "contents": [{
+                "parts": [{
+                    "text": full_prompt
+                }]
+            }]
+        }
+        
+        try:
+            response = requests.post(url, headers=headers, json=data, timeout=30)
+            
+            if response.status_code == 200:
+                result = response.json()
+                return result['candidates'][0]['content']['parts'][0]['text']
+            else:
+                error_detail = response.json() if response.text else "Unknown error"
+                return f"Error {response.status_code}: {error_detail}"
+                
+        except requests.exceptions.RequestException as e:
+            return f"Network error: {str(e)}"
+        except (KeyError, IndexError) as e:
+            return f"Response parsing error: {str(e)}"
 
 
 class MentalHealthChat(AIChatStrategy):

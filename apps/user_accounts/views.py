@@ -31,7 +31,6 @@ def health_records_view(request):
                 file_path=file
             )
 
-    # Fetch all records
     records = HealthRecord.objects.filter(user=user).order_by('-created_at')
 
     return render(request, 'user_accounts/health_records.html', {
@@ -45,7 +44,6 @@ def register_view(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
 
-        # Check if username already exists
         if User.objects.filter(username=username).exists():  
             messages.error(request, "Username already exists.")
             return redirect('register')
@@ -100,22 +98,19 @@ def profile_view(request):
             bp_dia = int(bp_dia)
             sugar = float(sugar)
 
-            # Range validation
             if not (50 <= bp_sys <= 250):
-                error_message = "🩸 Systolic BP must be between 50 and 250"
+                error_message = " Systolic BP must be between 50 and 250"
             elif not (30 <= bp_dia <= 150):
-                error_message = "🩸 Diastolic BP must be between 30 and 150"
+                error_message = " Diastolic BP must be between 30 and 150"
             elif not (30 <= sugar <= 500):
-                error_message = "🍬 Sugar level must be between 30 and 500"
-            elif bp_sys <= bp_dia:  # Add logical validation
-                error_message = "🩸 Systolic BP must be higher than Diastolic BP"
+                error_message = " Sugar level must be between 30 and 500"
+            elif bp_sys <= bp_dia:
+                error_message = " Systolic BP must be higher than Diastolic BP"
             else:
-                # Check if data already exists for today
                 existing_record = VitalStats.objects.filter(user=user, date=today).first()
                 if existing_record:
-                    error_message = "⚠️ You have already recorded your vitals for today. You can only add vitals once per day."
+                    error_message = " You have already recorded your vitals for today. You can only add vitals once per day."
                 else:
-                    # Save the data
                     VitalStats.objects.create(
                         user=user,
                         time=datetime.now().strftime("%H:%M"),
@@ -124,16 +119,16 @@ def profile_view(request):
                         sugar_level=sugar,
                         notes=""
                     )
-                    success_message = "✅ Your vitals have been recorded successfully!"
+                    success_message = "Your vitals have been recorded successfully!"
 
         except ValueError:
-            error_message = "❌ Please enter valid numeric values!"
+            error_message = " Please enter valid numeric values!"
 
     # Chart data logic remains the same
     chart_data = None
     chart_type = request.GET.get("chart")
     if chart_type:
-        factory = ChartDataFactory(str(user.id))
+        factory = ChartDataFactory(user.id) 
         labels, data = factory.get_data(chart_type)
 
         if chart_type == 'bp':
@@ -148,11 +143,9 @@ def profile_view(request):
 
         chart_data = strategy.render(labels or [], data or [], chart_type.upper(), color)
 
-    # Handle notifications (optional - remove the notification logic or keep it simple)
     start_of_day = datetime.combine(today, datetime.min.time())
     end_of_day = datetime.combine(today, datetime.max.time())
 
-    # Clear today's reminder notifications if they exist
     Notification.objects.filter(
         user=user,
         message="Don't forget to update your vitals!",
@@ -163,7 +156,7 @@ def profile_view(request):
     unread_count = Notification.objects.filter(user=user, is_read=False).count()
 
     return render(request, 'user_accounts/profile.html', {
-        'profile': user,  # Now using the User model directly
+        'profile': user, 
         'chart_data': chart_data,
         'unread_count': unread_count,
         'error_message': error_message,
@@ -206,7 +199,6 @@ def notification_list_view(request):
     user = request.user
     notifications = Notification.objects.filter(user=user).order_by('-sent_at')
     
-    # Mark unread notifications as read
     unread_notifications = notifications.filter(is_read=False)
     unread_notifications.update(is_read=True)
 
