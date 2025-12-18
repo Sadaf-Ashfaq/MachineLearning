@@ -1,25 +1,71 @@
 from django.shortcuts import render
+<<<<<<< HEAD
 from .ml_utils import predict_liver_disease
 from .ml_utils import predict_heart_disease
 
 
 
+=======
+from django.shortcuts import render
+from .ml_utils import (
+    predict_liver_disease,
+    predict_lifestyle_score,
+    predict_diabetes,
+    predict_stroke,
+    predict_obesity
+)
+>>>>>>> 7c10a4be4e9328a9a08ba18e64f39c0495b56f4d
 
 def index(request):
     return render(request, 'disease_prediction/disease_prediction.html')
 
-# 1. Disease Prediction (General)
-def disease_prediction(request):
-    return render(request, 'disease_prediction/disease_prediction_form.html')
+# Stroke Risk Prediction
+def stroke_prediction(request):
+    result = None
+    
+    if request.method == 'POST':
+        data = {
+            'gender': request.POST.get('gender'),
+            'age': float(request.POST.get('age')),
+            'hypertension': int(request.POST.get('hypertension')),
+            'heart_disease': int(request.POST.get('heart_disease')),
+            'ever_married': request.POST.get('ever_married'),
+            'work_type': request.POST.get('work_type'),
+            'Residence_type': request.POST.get('Residence_type'),
+            'avg_glucose_level': float(request.POST.get('avg_glucose_level')),
+            'bmi': float(request.POST.get('bmi')),
+            'smoking_status': request.POST.get('smoking_status')
+        }
+        
+        result = predict_stroke(data)
+    
+    return render(request, 'disease_prediction/stroke_prediction.html', {'result': result})
 
 # 2. Diabetes Risk
 def diabetes_risk(request):
-    return render(request, 'disease_prediction/diabetes_risk.html')
+    result = None
+    
+    if request.method == 'POST':
+        data = {
+            'gender': request.POST.get('gender'),
+            'age': float(request.POST.get('age')),
+            'hypertension': int(request.POST.get('hypertension')),
+            'heart_disease': int(request.POST.get('heart_disease')),
+            'smoking_history': request.POST.get('smoking_history'),
+            'bmi': float(request.POST.get('bmi')),
+            'HbA1c_level': float(request.POST.get('HbA1c_level')),
+            'blood_glucose_level': int(request.POST.get('blood_glucose_level'))
+        }
+        
+        result = predict_diabetes(data)
+    
+    return render(request, 'disease_prediction/diabetes_risk.html', {'result': result})
 
 # 3. Heart Disease
 def heart_prediction_view(request):
     result = None
 
+<<<<<<< HEAD
     if request.method == "POST":
         try:
             input_data = {
@@ -52,6 +98,10 @@ def heart_prediction_view(request):
 
 #
 # 5. Liver Disease (Already working with ML model)
+=======
+
+# 5. Liver Disease (Working with ML model)
+>>>>>>> 7c10a4be4e9328a9a08ba18e64f39c0495b56f4d
 def liver_disease(request):
     result = None
     
@@ -73,16 +123,60 @@ def liver_disease(request):
     
     return render(request, 'disease_prediction/liver_disease.html', {'result': result})
 
-# 6. Nutrient Deficiency
-def nutrient_deficiency(request):
-    return render(request, 'disease_prediction/nutrient_deficiency.html')
+# 6. Obesity Prediction (Working with ML model)
+def obesity_prediction(request):
+    result = None
+    
+    if request.method == 'POST':
+        data = {
+            'gender': request.POST.get('gender'),
+            'age': float(request.POST.get('age')),
+            'height': float(request.POST.get('height')),
+            'weight': float(request.POST.get('weight')),
+            'family_history': request.POST.get('family_history'),
+            'favc': request.POST.get('favc'),
+            'fcvc': float(request.POST.get('fcvc')),
+            'ncp': float(request.POST.get('ncp')),
+            'caec': request.POST.get('caec'),
+            'smoke': request.POST.get('smoke'),
+            'ch2o': float(request.POST.get('ch2o')),
+            'scc': request.POST.get('scc'),
+            'faf': float(request.POST.get('faf')),
+            'tue': float(request.POST.get('tue')),
+            'calc': request.POST.get('calc'),
+            'mtrans': request.POST.get('mtrans')
+        }
+        
+        result = predict_obesity(data)
+    
+    return render(request, 'disease_prediction/obesity_prediction.html', {'result': result})
 
-# 7. Lifestyle Score
+# 7. Lifestyle Score (Working with ML model)
 def lifestyle_score(request):
-    return render(request, 'disease_prediction/lifestyle_score.html')
+    result = None
+    
+    if request.method == 'POST':
+        data = {
+            'physical_activity': float(request.POST.get('physical_activity')),
+            'nutrition_score': float(request.POST.get('nutrition_score')),
+            'stress_level': float(request.POST.get('stress_level')),
+            'mindfulness': float(request.POST.get('mindfulness')),
+            'sleep_hours': float(request.POST.get('sleep_hours')),
+            'hydration': float(request.POST.get('hydration')),
+            'bmi': float(request.POST.get('bmi')),
+            'alcohol': float(request.POST.get('alcohol')),
+            'smoking': float(request.POST.get('smoking'))
+        }
+        
+        result = predict_lifestyle_score(data)
+    
+    return render(request, 'disease_prediction/lifestyle_score.html', {'result': result})
 
+<<<<<<< HEAD
 # 8. Symptom Severity
 def symptom_severity(request):
     return render(request, 'disease_prediction/symptom_severity.html')
 
 
+=======
+>>>>>>> 7c10a4be4e9328a9a08ba18e64f39c0495b56f4d
