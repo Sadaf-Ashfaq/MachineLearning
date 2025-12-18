@@ -3,12 +3,238 @@
 {% block title %}Heart Disease Prediction{% endblock %}
 
 {% block content %}
-<div class="container text-center mt-5">
-    <h2><i class="bi bi-heart-fill"></i> Heart Disease Prediction</h2>
-    <p class="mt-4">Model training in progress...</p>
-    <p>This feature will predict heart disease risk based on cardiac health data.</p>
-    <a href="{% url 'disease_prediction:index' %}" class="btn btn-secondary mt-3">
-        <i class="bi bi-arrow-left"></i> Back to Dashboard
-    </a>
+<style>
+    .prediction-container {
+        max-width: 900px;
+        margin: 40px auto;
+    }
+
+    .form-card {
+        background-color: #4D4738 !important;
+        border: 3px solid #C0AE94 !important;
+        border-radius: 15px;
+        padding: 35px;
+        box-shadow: 0 4px 15px rgba(77, 71, 59, 0.3);
+    }
+
+    .form-card h2 {
+        color: #C0AE94 !important;
+        font-weight: 600;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .form-label {
+        color: #C0AE94 !important;
+        font-weight: 500;
+        margin-bottom: 8px;
+    }
+
+    .form-control,
+    .form-select {
+        background-color: #BAB9A7 !important;
+        border: 2px solid #C0AE94 !important;
+        color: #4D4738 !important;
+        border-radius: 8px;
+        padding: 10px;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        background-color: #BAB9A7 !important;
+        border-color: #755F4A !important;
+        box-shadow: 0 0 0 0.2rem rgba(117, 95, 74, 0.25);
+        color: #4D4738 !important;
+    }
+
+    .row {
+        margin-bottom: 18px;
+    }
+
+    .btn-predict-submit {
+        background-color: #755F4A !important;
+        color: white !important;
+        border: 2px solid #C0AE94 !important;
+        border-radius: 8px;
+        padding: 14px;
+        width: 100%;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-predict-submit:hover {
+        background-color: #BAB9A7 !important;
+        color: #4D4738 !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(186, 185, 167, 0.4);
+    }
+
+    .result-card {
+        background-color: #4D4738;
+        border: 3px solid #C0AE94;
+        border-radius: 15px;
+        padding: 30px;
+        margin-top: 35px;
+        text-align: center;
+    }
+
+    .result-success {
+        border-color: #28a745 !important;
+    }
+
+    .result-danger {
+        border-color: #dc3545 !important;
+    }
+
+    .prediction-text {
+        font-size: 1.6rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .risk-text {
+        font-size: 1.2rem;
+        color: #C0AE94;
+    }
+
+    .text-success-custom {
+        color: #28a745 !important;
+    }
+
+    .text-danger-custom {
+        color: #dc3545 !important;
+    }
+</style>
+
+<div class="prediction-container">
+
+    <div class="form-card">
+        <h2><i class="bi bi-heart-pulse"></i> Heart Disease Prediction</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <!-- Row 1 -->
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="form-label">Age (Years)</label>
+                    <input type="number" name="Age" class="form-control"
+                           required min="1" max="120" placeholder="e.g. 45">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Sex</label>
+                    <select name="Sex" class="form-select" required>
+                        <option value="">Select</option>
+                        <option value="M">Male</option>
+                        <option value="F">Female</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Row 2 -->
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="form-label">Chest Pain Type</label>
+                    <select name="ChestPainType" class="form-select" required>
+                        <option value="">Select</option>
+                        <option value="ATA">ATA</option>
+                        <option value="NAP">NAP</option>
+                        <option value="ASY">ASY</option>
+                        <option value="TA">TA</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Resting Blood Pressure</label>
+                    <input type="number" name="RestingBP" class="form-control"
+                           required min="50" max="250" placeholder="e.g. 120">
+                </div>
+            </div>
+
+            <!-- Row 3 -->
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="form-label">Cholesterol</label>
+                    <input type="number" name="Cholesterol" class="form-control"
+                           required min="50" max="600" placeholder="e.g. 220">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Fasting Blood Sugar</label>
+                    <select name="FastingBS" class="form-select" required>
+                        <option value="">Select</option>
+                        <option value="1">&gt; 120 mg/dl</option>
+                        <option value="0">≤ 120 mg/dl</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Row 4 -->
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="form-label">Resting ECG</label>
+                    <select name="RestingECG" class="form-select" required>
+                        <option value="">Select</option>
+                        <option value="Normal">Normal</option>
+                        <option value="ST">ST</option>
+                        <option value="LVH">LVH</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Maximum Heart Rate</label>
+                    <input type="number" name="MaxHR" class="form-control"
+                           required min="60" max="220" placeholder="e.g. 150">
+                </div>
+            </div>
+
+            <!-- Row 5 -->
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="form-label">Exercise Angina</label>
+                    <select name="ExerciseAngina" class="form-select" required>
+                        <option value="">Select</option>
+                        <option value="Y">Yes</option>
+                        <option value="N">No</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Oldpeak</label>
+                    <input type="number" step="0.1" name="Oldpeak" class="form-control"
+                           required min="0" max="6" placeholder="e.g. 1.5">
+                </div>
+            </div>
+
+            <!-- Row 6 -->
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="form-label">ST Slope</label>
+                    <select name="ST_Slope" class="form-select" required>
+                        <option value="">Select</option>
+                        <option value="Up">Up</option>
+                        <option value="Flat">Flat</option>
+                        <option value="Down">Down</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-predict-submit mt-3">
+                <i class="bi bi-calculator"></i> Predict Heart Disease
+            </button>
+        </form>
+    </div>
+
+    {% if result %}
+    <div class="result-card {% if result.status == 'success' %}result-success{% else %}result-danger{% endif %}">
+        <h3>Prediction Result</h3>
+
+        <p class="prediction-text 
+           {% if result.status == 'success' %}text-success-custom{% else %}text-danger-custom{% endif %}">
+            {{ result.prediction }}
+        </p>
+
+        <p class="risk-text">
+            Risk Probability: <strong>{{ result.risk_percentage }}%</strong>
+        </p>
+    </div>
+    {% endif %}
+
 </div>
 {% endblock %}

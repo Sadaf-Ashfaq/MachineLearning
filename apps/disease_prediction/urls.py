@@ -7,8 +7,8 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('disease-prediction/', views.disease_prediction, name='disease_prediction'),
     path('diabetes-risk/', views.diabetes_risk, name='diabetes_risk'),
-    path('heart-disease/', views.heart_disease, name='heart_disease'),
-    path('kidney-disease/', views.kidney_disease, name='kidney_disease'),
+   path('heart-disease/', views.heart_prediction_view, name='heart_disease'),
+
     path('liver-disease/', views.liver_disease, name='liver_disease'),
     path('nutrient-deficiency/', views.nutrient_deficiency, name='nutrient_deficiency'),
     path('lifestyle-score/', views.lifestyle_score, name='lifestyle_score'),
